@@ -1,0 +1,3620 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f4efe3">
+<title>农知精灵 · 山东作物问答与植物萌宠</title>
+<meta name="description" content="面向山东农户与青少年的农业问答应用：内置审核知识库，不联网、不编造；附带一株会生病的卡通植物，边玩边学病虫害防治。">
+<style>
+/* ===========================================================
+   农知精灵 · 样式
+   设计取向：暖纸色底 + 田园绿，低饱和、圆角、可读性优先
+   =========================================================== */
+
+:root{
+  --paper:#f5f0e4;
+  --paper-2:#efe8d6;
+  --card:#fffdf7;
+  --card-2:#faf6ea;
+  --ink:#2a2820;
+  --ink-2:#4c473a;
+  --muted:#7d7765;
+  --line:#e6ddc9;
+  --line-2:#d9cfb6;
+  --green:#2f7d4f;
+  --green-2:#3f9763;
+  --green-ink:#1e5535;
+  --green-soft:#e8f2e7;
+  --amber:#d9a441;
+  --amber-soft:#fbf0d6;
+  --amber-ink:#8a6416;
+  --clay:#b96446;
+  --danger:#bf5540;
+  --danger-soft:#fbe9e3;
+  --sky:#e9f4ef;
+
+  --r-lg:24px;
+  --r-md:16px;
+  --r-sm:12px;
+  --sh-sm:0 2px 8px rgba(60,50,32,.06);
+  --sh:0 14px 36px rgba(70,58,34,.10);
+  --font:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--font);
+  color:var(--ink);
+  background:
+    radial-gradient(1100px 620px at 6% -12%, #e6f0df 0%, transparent 58%),
+    radial-gradient(900px 520px at 102% -4%, #fbf1d8 0%, transparent 52%),
+    var(--paper);
+  min-height:100dvh;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:radial-gradient(rgba(120,105,70,.075) 1px, transparent 1px);
+  background-size:22px 22px;
+  -webkit-mask-image:linear-gradient(to bottom, #000 0%, transparent 78%);
+  mask-image:linear-gradient(to bottom, #000 0%, transparent 78%);
+}
+button{font-family:inherit}
+[hidden]{display:none !important}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------------- 布局 ---------------- */
+.app{
+  position:relative;z-index:1;
+  max-width:1440px;margin:0 auto;
+  height:100dvh;
+  display:flex;flex-direction:column;
+  gap:12px;
+  padding:14px 22px 10px;
+}
+
+/* ---------------- 顶栏 ---------------- */
+.topbar{
+  display:flex;align-items:center;gap:18px;
+  padding:2px 2px 0;
+}
+.brand{
+  display:flex;align-items:center;gap:11px;
+  text-decoration:none;color:inherit;flex:none;
+}
+.brand-mark{
+  width:42px;height:42px;border-radius:14px;
+  background:var(--green-soft);
+  display:grid;place-items:center;
+  border:1px solid #d8e6d5;
+  box-shadow:var(--sh-sm);
+}
+.brand-mark svg{width:30px;height:30px}
+.brand-text{display:flex;flex-direction:column;line-height:1.25}
+.brand-text strong{font-size:19px;letter-spacing:.06em;font-weight:800}
+.brand-text small{font-size:11.5px;color:var(--muted);letter-spacing:.02em;margin-top:2px}
+
+.tabs{
+  display:flex;gap:2px;padding:4px;
+  background:rgba(255,253,247,.6);
+  border:1px solid var(--line);
+  border-radius:999px;
+  margin-left:auto;
+}
+.tab{
+  appearance:none;border:0;background:transparent;cursor:pointer;
+  padding:8px 18px;border-radius:999px;
+  font-size:14px;color:var(--muted);font-weight:600;
+  transition:background .18s,color .18s,box-shadow .18s;
+}
+.tab:hover{color:var(--ink-2)}
+.tab.is-active{background:var(--card);color:var(--green-ink);box-shadow:var(--sh-sm)}
+
+.top-actions{display:flex;align-items:center;gap:8px;flex:none}
+.ghost-btn{
+  appearance:none;cursor:pointer;
+  border:1px solid var(--line-2);background:rgba(255,253,247,.65);
+  color:var(--ink-2);border-radius:999px;
+  padding:8px 15px;font-size:13px;
+  transition:background .18s,border-color .18s;
+}
+.ghost-btn:hover{background:#fff;border-color:var(--green-2);color:var(--green-ink)}
+
+.switch-btn{
+  appearance:none;cursor:pointer;
+  display:flex;align-items:center;gap:9px;
+  border:1px solid var(--line-2);background:rgba(255,253,247,.65);
+  color:var(--ink-2);border-radius:999px;
+  padding:6px 14px 6px 7px;font-size:13px;
+  transition:background .18s,border-color .18s;
+}
+.switch-btn:hover{background:#fff}
+.switch-btn .sw{
+  width:32px;height:19px;border-radius:999px;background:#ded5c1;position:relative;
+  transition:background .2s;flex:none;
+}
+.switch-btn .sw::after{
+  content:"";position:absolute;top:2px;left:2px;
+  width:15px;height:15px;border-radius:50%;background:#fff;
+  box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform .2s;
+}
+.switch-btn[aria-pressed="true"]{background:var(--green-soft);border-color:#bcd9c0;color:var(--green-ink)}
+.switch-btn[aria-pressed="true"] .sw{background:var(--green)}
+.switch-btn[aria-pressed="true"] .sw::after{transform:translateX(13px)}
+
+/* ---------------- 工作区 ---------------- */
+.workspace{
+  flex:1;min-height:0;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 380px;
+  gap:16px;
+}
+
+/* ---------------- 聊天面板 ---------------- */
+.chat-panel{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--r-lg);
+  box-shadow:var(--sh);
+  display:flex;flex-direction:column;
+  min-height:0;overflow:hidden;
+}
+.chat-head{
+  padding:11px 14px;
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,#fffdf7,#fbf7ec);
+}
+.crop-chips{
+  display:flex;gap:7px;overflow-x:auto;
+  scrollbar-width:none;
+  padding-bottom:2px;
+}
+.crop-chips::-webkit-scrollbar{display:none}
+.chip{
+  appearance:none;cursor:pointer;flex:none;
+  display:inline-flex;align-items:center;gap:5px;
+  background:var(--card-2);border:1px solid transparent;
+  color:var(--ink-2);border-radius:999px;
+  padding:7px 13px;font-size:13px;
+  transition:background .16s,border-color .16s,color .16s,transform .16s;
+}
+.chip:hover{border-color:#cfe0cc;background:#fff;transform:translateY(-1px)}
+.chip.is-on{background:var(--green);border-color:var(--green);color:#fff}
+.chip.is-on:hover{background:var(--green-2);color:#fff}
+.chip b{font-weight:600}
+.chip .em{font-size:14px;line-height:1}
+
+.messages{
+  flex:1;min-height:0;overflow-y:auto;
+  padding:20px 20px 6px;
+  display:flex;flex-direction:column;gap:18px;
+  scroll-behavior:smooth;
+  overscroll-behavior:contain;
+  background:radial-gradient(760px 380px at 50% -10%, #fbf7ea 0%, rgba(251,247,234,0) 72%);
+}
+
+.messages::-webkit-scrollbar{width:10px}
+.messages::-webkit-scrollbar-thumb{background:#ded4bd;border-radius:99px;border:3px solid var(--card)}
+.messages::-webkit-scrollbar-track{background:transparent}
+
+.msg{display:flex;gap:10px;align-items:flex-start;animation:rise .42s cubic-bezier(.2,.8,.3,1) both}
+.msg-user{justify-content:flex-end}
+.avatar{
+  width:42px;height:42px;border-radius:50%;
+  background:#f3ecda;border:1px solid #e3d9c2;
+  overflow:hidden;flex:none;
+  display:grid;place-items:center;
+  box-shadow:var(--sh-sm);
+}
+.avatar svg{width:100%;height:100%;display:block}
+.msg-col{min-width:0;max-width:min(720px,86%);display:flex;flex-direction:column;gap:6px}
+.msg-user .msg-col{max-width:min(560px,80%);align-items:flex-end}
+.msg-author{font-size:11.5px;color:var(--muted);letter-spacing:.04em;padding-left:2px}
+
+.bubble{
+  background:#fff;border:1px solid var(--line);
+  border-radius:4px 18px 18px 18px;
+  padding:14px 16px;
+  box-shadow:var(--sh-sm);
+  font-size:14.5px;line-height:1.8;color:var(--ink-2);
+  overflow-wrap:anywhere;
+}
+.msg-user .bubble{
+  background:linear-gradient(160deg,#35875a,#2c7049);
+  border-color:#2b6c47;color:#fff;
+  border-radius:18px 4px 18px 18px;
+  box-shadow:0 8px 18px rgba(45,110,72,.22);
+}
+.bubble p{margin:0 0 8px}
+.bubble p:last-child{margin-bottom:0}
+
+.cap-list{
+  display:flex;flex-direction:column;gap:7px;
+  margin-top:11px;padding-top:11px;
+  border-top:1px dashed var(--line);
+}
+.cap-list div{display:flex;gap:8px;align-items:baseline;font-size:13.2px;line-height:1.6;color:var(--ink-2)}
+.cap-list .em{flex:none;width:18px;text-align:center}
+.cap-list b{color:var(--ink);font-weight:700;margin-right:5px}
+
+/* 回答卡片 */
+.ans{display:flex;flex-direction:column;gap:11px}
+.ans-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tag{
+  font-size:11.5px;padding:3px 9px;border-radius:999px;
+  background:var(--green-soft);color:var(--green-ink);
+  border:1px solid #d3e5d3;font-weight:600;letter-spacing:.03em;
+}
+.tag.cat-虫害{background:#fdeee0;color:#8c4a1d;border-color:#f1d6bd}
+.tag.cat-栽培{background:#eef1fa;color:#3d4a75;border-color:#d9dff0}
+.tag.cat-用药{background:var(--amber-soft);color:var(--amber-ink);border-color:#efdcae}
+.ans-title{font-size:17.5px;font-weight:800;letter-spacing:.02em;color:var(--ink);margin:0}
+.score-pill{
+  margin-left:auto;font-size:11px;color:var(--amber-ink);
+  background:var(--amber-soft);border:1px solid #efdcae;
+  border-radius:999px;padding:3px 9px;white-space:nowrap;
+}
+.ans-lead{font-size:14.5px;line-height:1.8;color:var(--ink-2);margin:0}
+.ans-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.ans-cell{background:var(--card-2);border:1px solid #efe7d5;border-radius:12px;padding:9px 12px}
+.ans-cell dt{font-size:11.5px;color:var(--muted);letter-spacing:.08em;margin-bottom:3px;display:flex;align-items:center;gap:5px}
+.ans-cell dt::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--green-2)}
+.ans-cell dd{margin:0;font-size:13.5px;line-height:1.75;color:var(--ink-2)}
+.ans-block h4{
+  margin:0 0 6px;font-size:13px;letter-spacing:.08em;color:var(--green-ink);
+  display:flex;align-items:center;gap:7px;
+}
+.ans-block h4::before{content:"";width:3px;height:13px;border-radius:2px;background:var(--green-2)}
+.ans-block ol{margin:0;padding-left:19px;display:flex;flex-direction:column;gap:6px}
+.ans-block li{font-size:13.8px;line-height:1.75;color:var(--ink-2);padding-left:2px}
+.ans-block li::marker{color:var(--green-2);font-weight:700}
+.ans-tip{
+  display:flex;gap:8px;
+  background:var(--amber-soft);border:1px solid #f0dcae;border-left:3px solid var(--amber);
+  border-radius:10px;padding:9px 12px;
+  font-size:13px;line-height:1.7;color:#6d5214;
+}
+.ans-tip .ico{flex:none;line-height:1.5}
+.ans-src{
+  font-size:11.5px;color:#948c78;line-height:1.6;
+  border-top:1px dashed var(--line-2);padding-top:8px;
+  display:flex;gap:6px;align-items:flex-start;
+}
+.ans-src svg{width:13px;height:13px;flex:none;margin-top:3px;opacity:.7}
+.ans-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:1px}
+.mini-act{
+  appearance:none;cursor:pointer;
+  border:1px solid var(--line);background:#fff;
+  color:var(--muted);border-radius:999px;
+  padding:5px 11px;font-size:12px;
+  display:inline-flex;align-items:center;gap:5px;
+  transition:color .16s,border-color .16s,background .16s;
+}
+.mini-act:hover{color:var(--green-ink);border-color:#cfe0cc;background:var(--green-soft)}
+.mini-act:disabled{opacity:.45;cursor:not-allowed}
+
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:2px}
+.suggest-chip{
+  appearance:none;cursor:pointer;
+  border:1px dashed var(--line-2);background:transparent;
+  color:var(--ink-2);border-radius:999px;
+  padding:6px 12px;font-size:12.8px;
+  transition:all .16s;
+}
+.suggest-chip:hover{border-style:solid;border-color:var(--green-2);color:var(--green-ink);background:#fff}
+
+.clarify-list{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+.clarify-btn{
+  appearance:none;cursor:pointer;
+  border:1px solid #d9e4d5;background:var(--green-soft);
+  color:var(--green-ink);border-radius:10px;
+  padding:8px 12px;font-size:13px;font-weight:600;
+}
+.clarify-btn:hover{background:#dcefdb;border-color:var(--green-2)}
+
+.typing{display:inline-flex;gap:4px;align-items:center;padding:4px 2px}
+.typing i{width:6px;height:6px;border-radius:50%;background:#b9b19c;animation:blink 1.2s infinite}
+.typing i:nth-child(2){animation-delay:.16s}
+.typing i:nth-child(3){animation-delay:.32s}
+
+/* 输入区 */
+.composer{
+  padding:10px 16px 12px;
+  border-top:1px solid var(--line);
+  background:linear-gradient(180deg,#fffdf7,#faf5e8);
+}
+.suggest{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:8px}
+.suggest:empty{display:none}
+.ask-row{display:flex;gap:8px;align-items:center}
+.ask-row input{
+  flex:1;min-width:0;
+  border:1.5px solid var(--line-2);background:#fff;
+  border-radius:13px;padding:12px 15px;
+  font-size:15px;color:var(--ink);font-family:inherit;
+  transition:border-color .18s,box-shadow .18s;
+}
+.ask-row input::placeholder{color:#a8a08c}
+.ask-row input:focus{
+  outline:none;border-color:var(--green-2);
+  box-shadow:0 0 0 3px rgba(63,151,99,.14);
+}
+.icon-btn{
+  appearance:none;cursor:pointer;flex:none;
+  width:44px;height:44px;border-radius:13px;
+  border:1px solid var(--line-2);background:var(--card-2);
+  color:var(--green-ink);display:grid;place-items:center;
+  transition:background .16s,border-color .16s;
+}
+.icon-btn svg{width:21px;height:21px}
+.icon-btn:hover{background:#fff;border-color:var(--green-2)}
+.icon-btn.is-live{background:var(--danger-soft);border-color:#ecc4b8;color:var(--danger)}
+.send-btn{
+  appearance:none;cursor:pointer;flex:none;
+  height:44px;padding:0 22px;border-radius:13px;border:0;
+  background:linear-gradient(160deg,#38915e,#2c7049);
+  color:#fff;font-size:15px;font-weight:700;letter-spacing:.04em;
+  box-shadow:0 6px 14px rgba(45,110,72,.22);
+  transition:transform .12s,box-shadow .18s,filter .18s;
+}
+.send-btn:hover{filter:brightness(1.05)}
+.send-btn:active{transform:translateY(1px);box-shadow:0 3px 8px rgba(45,110,72,.2)}
+.fineprint{margin:7px 2px 0;font-size:11.5px;line-height:1.6;color:#958d79}
+
+/* ---------------- 宠物面板 ---------------- */
+.pet-panel{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--r-lg);
+  box-shadow:var(--sh);
+  padding:14px;
+  display:flex;flex-direction:column;gap:11px;
+  min-height:0;overflow-y:auto;
+}
+.pet-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.pet-head h2{margin:0;font-size:12px;letter-spacing:.14em;color:var(--muted);font-weight:600}
+.pet-head p{margin:3px 0 0;font-size:13px;color:var(--ink-2)}
+.pet-head p b{font-size:15.5px;color:var(--green-ink);letter-spacing:.03em}
+.pet-head-actions{display:flex;gap:6px}
+.mini-btn{
+  appearance:none;cursor:pointer;
+  border:1px solid var(--line);background:var(--card-2);
+  color:var(--muted);border-radius:8px;padding:4px 9px;font-size:11.5px;
+}
+.mini-btn:hover{color:var(--green-ink);border-color:#cfe0cc;background:var(--green-soft)}
+
+.stage{
+  position:relative;height:250px;border-radius:18px;overflow:hidden;
+  border:1px solid #e0d8c2;
+  background:
+    linear-gradient(180deg,#e7f3ec 0%,#f2f4e3 56%,#efe4c7 56%,#e5d6b1 100%);
+  flex:none;
+}
+.stage-sun{
+  position:absolute;top:18px;right:22px;width:46px;height:46px;border-radius:50%;
+  background:radial-gradient(circle at 40% 38%,#ffe9a8,#f3c65b);
+  box-shadow:0 0 0 10px rgba(247,214,130,.22),0 0 34px rgba(243,198,91,.5);
+  animation:sunbreath 6s ease-in-out infinite;
+}
+.stage-hills{
+  position:absolute;left:-8%;right:-8%;bottom:42%;height:64px;
+  background:radial-gradient(60% 100% at 22% 100%,#dcebcd 0 62%,transparent 63%),
+             radial-gradient(64% 100% at 78% 100%,#d2e5c2 0 62%,transparent 63%);
+  opacity:.9;
+}
+.plant{
+  position:absolute;left:50%;bottom:2px;transform:translateX(-50%);
+  width:196px;height:236px;
+  display:flex;align-items:flex-end;justify-content:center;
+  transition:opacity .3s ease;
+}
+.plant svg{width:100%;height:100%;display:block;overflow:visible}
+.plant .float{animation:float 4.2s ease-in-out infinite;transform-origin:50% 90%}
+.plant .sway{animation:sway 5.2s ease-in-out infinite;transform-origin:50% 100%}
+.pet-bubble{
+  position:absolute;top:10px;left:10px;right:10px;z-index:2;
+  background:rgba(255,255,255,.96);
+  border:1px solid var(--line);
+  border-radius:14px 14px 14px 4px;
+  padding:9px 11px;
+  font-size:12.8px;line-height:1.62;color:var(--ink-2);
+  box-shadow:0 8px 20px rgba(70,58,34,.12);
+  max-height:190px;overflow:hidden;
+  animation:pop .4s cubic-bezier(.2,.9,.3,1.1) both;
+}
+.pet-bubble b{color:var(--green-ink)}
+.pet-bubble .bub-title{font-size:12px;color:var(--amber-ink);font-weight:700;letter-spacing:.04em;margin-bottom:3px;display:flex;align-items:center;gap:5px}
+.pet-bubble .bub-media{margin:6px 0;border-radius:10px;overflow:hidden;border:1px solid #eee3cd;background:#fbf7ea}
+.pet-bubble .bub-media svg{display:block;width:100%;height:auto}
+.pet-bubble .bub-small{font-size:11.5px;color:#8d8571;margin-top:4px}
+
+/* 答题时：病虫示意图铺满画框，植物退到幕后 */
+.stage.is-quiz{height:290px}
+.stage.is-quiz .plant{opacity:0}
+.stage.is-quiz .pet-bubble{
+  top:8px;left:8px;right:8px;bottom:8px;
+  max-height:none;overflow:hidden;
+  display:flex;flex-direction:column;
+  border-radius:14px;padding:10px 11px;
+}
+.stage.is-quiz .pet-bubble .bub-media{
+  flex:none;height:186px;margin:5px 0;
+  display:flex;align-items:center;justify-content:center;
+  background:#faf5e7;border:1px solid #eee3cd;
+}
+.stage.is-quiz .pet-bubble .bub-media svg{width:100%;height:100%;display:block}
+
+.stats{background:#fff;border:1px solid #efe7d5;border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:8px;flex:none}
+.stat-top{display:flex;justify-content:space-between;align-items:baseline;font-size:11.5px;color:var(--muted);margin-bottom:4px}
+.stat-top b{font-size:12.5px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.bar{height:7px;border-radius:999px;background:#efe7d3;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:999px;width:0;transition:width .6s cubic-bezier(.2,.8,.3,1),background .3s}
+.bar-health{background:linear-gradient(90deg,#69c08a,#3f9763)}
+.bar-health.is-warn{background:linear-gradient(90deg,#f0c264,#e0a03a)}
+.bar-health.is-bad{background:linear-gradient(90deg,#e08a6f,#c0563f)}
+.bar-growth{background:linear-gradient(90deg,#f2cd77,#7ec48a)}
+.stat-mini{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);border-top:1px dashed var(--line);padding-top:7px}
+.stat-mini b{color:var(--green-ink);font-size:12.5px;font-variant-numeric:tabular-nums}
+
+.quiz{background:#fff;border:1px solid #e9e0cb;border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px;animation:pop .38s cubic-bezier(.2,.9,.3,1.1) both;flex:none}
+.quiz-q{font-size:13.4px;font-weight:700;color:var(--ink);line-height:1.6}
+.quiz-q span{color:var(--green-ink)}
+.quiz-opts{display:flex;flex-direction:column;gap:6px}
+.opt{
+  appearance:none;cursor:pointer;text-align:left;
+  border:1px solid var(--line);background:var(--card-2);
+  border-radius:10px;padding:9px 11px;
+  font-size:12.9px;line-height:1.55;color:var(--ink-2);
+  transition:border-color .16s,background .16s,transform .12s;
+}
+.opt:hover:not(:disabled){border-color:var(--green-2);background:#fff;transform:translateX(2px)}
+.opt:disabled{cursor:default}
+.opt.is-right{border-color:#7fbf95;background:var(--green-soft);color:var(--green-ink)}
+.opt.is-wrong{border-color:#e6b3a5;background:var(--danger-soft);color:#8f3a27}
+.opt .mark{font-weight:800;margin-right:4px}
+.why{display:block;margin-top:4px;font-size:11.8px;line-height:1.6;color:#7d7765;font-weight:400}
+.opt.is-right .why{color:#2f6b48}
+.opt.is-wrong .why{color:#8f4a3a}
+.quiz-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:11.5px;color:var(--muted)}
+.quiz-next{
+  appearance:none;cursor:pointer;border:0;border-radius:9px;
+  background:var(--green);color:#fff;padding:7px 13px;font-size:12.5px;font-weight:600;
+}
+.quiz-next:hover{filter:brightness(1.06)}
+.quiz-learn{font-size:11.8px;color:var(--amber-ink);background:var(--amber-soft);border-radius:8px;padding:7px 9px;line-height:1.6}
+
+.care{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;flex:none}
+.care button{
+  appearance:none;cursor:pointer;
+  border:1px solid var(--line);background:var(--card-2);
+  border-radius:11px;padding:8px 0 7px;
+  font-size:11.8px;color:var(--ink-2);
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  transition:background .16s,border-color .16s,transform .12s;
+}
+.care button span{font-size:15px;line-height:1}
+.care button:hover{background:#fff;border-color:#cfe0cc;transform:translateY(-1px)}
+.care button:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+.badges{display:flex;flex-wrap:wrap;gap:5px;flex:none}
+.badge{
+  font-size:10.8px;padding:3px 8px;border-radius:999px;
+  background:var(--amber-soft);border:1px solid #efdcae;color:var(--amber-ink);
+  animation:pop .35s both;
+}
+.badges:empty{display:none}
+
+/* 小绿日记 */
+.diary{
+  margin-top:auto;
+  border-top:1px dashed var(--line);
+  padding-top:9px;
+  display:flex;flex-direction:column;gap:4px;
+}
+.diary[hidden]{display:none}
+.diary h3{margin:0 0 2px;font-size:10.5px;color:var(--muted);letter-spacing:.16em;font-weight:600}
+.diary p{margin:0;font-size:11.4px;line-height:1.55;color:#8c8571;display:flex;gap:6px;align-items:baseline}
+.diary p i{font-style:normal;flex:none;font-size:10px;width:12px;text-align:center}
+.diary p b{color:var(--ink-2);font-weight:600}
+.diary .d-ok i{color:var(--green-2)}
+.diary .d-no i{color:var(--danger)}
+.diary .d-care i{color:var(--amber)}
+
+/* ---------------- 知识库视图 ---------------- */
+.kb-view{
+  flex:1;min-height:0;overflow-y:auto;
+  display:flex;flex-direction:column;gap:16px;
+  padding-right:4px;
+}
+.kb-hero{
+  background:linear-gradient(135deg,#eaf3e4,#fdf7e6 70%);
+  border:1px solid #e2dcc7;border-radius:var(--r-lg);
+  padding:22px 24px;
+  display:flex;gap:24px;align-items:center;justify-content:space-between;
+  box-shadow:var(--sh-sm);
+}
+.kb-hero-copy h2{margin:0 0 6px;font-size:22px;letter-spacing:.04em}
+.kb-hero-copy p{margin:0;max-width:640px;font-size:13.6px;line-height:1.8;color:var(--ink-2)}
+.kb-hero-stats{display:flex;gap:22px;flex:none}
+.kb-hero-stats div{text-align:center}
+.kb-hero-stats b{display:block;font-size:24px;color:var(--green-ink);letter-spacing:.02em}
+.kb-hero-stats span{font-size:11.5px;color:var(--muted)}
+
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.fact{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);
+  padding:14px 15px;box-shadow:var(--sh-sm);
+  display:flex;gap:10px;
+}
+.fact .em{font-size:20px;line-height:1.4;flex:none}
+.fact h3{margin:0 0 4px;font-size:13.5px;letter-spacing:.02em}
+.fact p{margin:0;font-size:12.6px;line-height:1.7;color:var(--muted)}
+
+.kb-browse{display:flex;flex-direction:column;gap:12px}
+.kb-tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.crop-filter{display:flex;gap:6px;flex-wrap:wrap;flex:1}
+.kb-search{
+  display:flex;align-items:center;gap:7px;
+  border:1px solid var(--line-2);background:#fff;border-radius:999px;
+  padding:8px 14px;min-width:240px;
+}
+.kb-search svg{width:16px;height:16px;color:var(--muted);flex:none}
+.kb-search input{border:0;outline:0;background:transparent;font-size:13px;width:100%;font-family:inherit;color:var(--ink)}
+.kb-search:focus-within{border-color:var(--green-2);box-shadow:0 0 0 3px rgba(63,151,99,.12)}
+
+.kb-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding-bottom:12px}
+.kb-item{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);
+  padding:0;overflow:hidden;box-shadow:var(--sh-sm);
+  transition:border-color .16s,box-shadow .16s;
+}
+.kb-item:hover{border-color:#cfdcc7;box-shadow:0 8px 20px rgba(70,58,34,.08)}
+.kb-item summary{
+  cursor:pointer;list-style:none;
+  padding:13px 15px;
+  display:flex;align-items:center;gap:9px;
+  font-size:14px;font-weight:600;color:var(--ink);
+}
+.kb-item summary::-webkit-details-marker{display:none}
+.kb-item summary .em{font-size:16px}
+.kb-item summary .cat{
+  font-size:10.5px;font-weight:500;padding:2px 7px;border-radius:999px;
+  background:var(--card-2);border:1px solid var(--line);color:var(--muted);flex:none;
+}
+.kb-item summary .arrow{margin-left:auto;color:#b3aa95;transition:transform .2s;font-size:12px}
+.kb-item[open] summary .arrow{transform:rotate(90deg)}
+.kb-item[open] summary{border-bottom:1px dashed var(--line);background:#fdfaf0}
+.kb-item .kb-body{padding:12px 15px 15px;font-size:13px;line-height:1.8;color:var(--ink-2);display:flex;flex-direction:column;gap:9px}
+.kb-body .row{display:flex;gap:8px}
+.kb-body .row .k{flex:none;color:var(--muted);font-size:11.5px;letter-spacing:.06em;padding-top:2px;min-width:52px}
+.kb-body .row .v{flex:1}
+.kb-body ul{margin:0;padding-left:18px}
+.kb-body li{margin:3px 0}
+.kb-body .src{font-size:11px;color:#9b947f;border-top:1px dashed var(--line);padding-top:7px}
+.kb-empty{padding:22px;text-align:center;color:var(--muted);font-size:13px}
+
+/* ---------------- 页脚 ---------------- */
+.foot{
+  display:flex;gap:16px;justify-content:center;flex-wrap:wrap;
+  font-size:11px;color:#9a927d;padding:2px 0 0;
+}
+
+/* ---------------- 弹层 ---------------- */
+.modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:20px;
+  background:rgba(42,40,32,.42);backdrop-filter:blur(3px);animation:fade .2s both}
+.modal-card{
+  position:relative;width:min(600px,100%);max-height:82dvh;overflow-y:auto;
+  background:var(--card);border-radius:22px;padding:26px 26px 22px;
+  box-shadow:0 30px 70px rgba(40,32,18,.3);
+  animation:pop .28s cubic-bezier(.2,.9,.3,1.05) both;
+}
+.modal-close{
+  position:absolute;top:14px;right:14px;
+  width:32px;height:32px;border-radius:50%;border:1px solid var(--line);
+  background:var(--card-2);cursor:pointer;color:var(--muted);font-size:17px;line-height:1;
+}
+.modal-close:hover{background:#fff;color:var(--ink)}
+.modal-body h2{margin:0 0 6px;font-size:19px;letter-spacing:.03em}
+.modal-body .sub{margin:0 0 16px;font-size:12.5px;color:var(--muted)}
+.modal-body h3{margin:16px 0 6px;font-size:14px;color:var(--green-ink)}
+.modal-body p{margin:0 0 10px;font-size:13.4px;line-height:1.8;color:var(--ink-2)}
+.modal-body ul{margin:0 0 10px;padding-left:20px}
+.modal-body li{font-size:13.4px;line-height:1.8;color:var(--ink-2);margin:4px 0}
+.modal-body .note{background:var(--amber-soft);border:1px solid #f0dcae;border-radius:10px;padding:10px 12px;font-size:12.5px;color:#6d5214;line-height:1.7}
+.modal-body .steps{counter-reset:s;padding:0;margin:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.modal-body .steps li{counter-increment:s;position:relative;padding-left:30px;font-size:13.2px;line-height:1.7}
+.modal-body .steps li::before{
+  content:counter(s);position:absolute;left:0;top:0;
+  width:21px;height:21px;border-radius:50%;background:var(--green-soft);color:var(--green-ink);
+  display:grid;place-items:center;font-size:11.5px;font-weight:700;
+}
+
+.toast{
+  position:fixed;left:50%;bottom:26px;transform:translate(-50%,14px);
+  background:#2b2823;color:#fff;padding:10px 18px;border-radius:999px;
+  font-size:13px;box-shadow:0 12px 30px rgba(0,0,0,.24);
+  opacity:0;pointer-events:none;transition:opacity .24s,transform .24s;z-index:60;
+  max-width:88vw;text-align:center;
+}
+.toast.is-on{opacity:1;transform:translate(-50%,0)}
+
+/* ---------------- 大字模式 ---------------- */
+.app.simple .workspace{grid-template-columns:minmax(0,1fr)}
+.app.simple .pet-panel{display:none}
+.app.simple .chat-panel{border-radius:20px}
+.app.simple .messages{padding:22px 24px 6px;gap:20px}
+.app.simple .bubble{font-size:17.5px;line-height:1.85;padding:16px 18px;max-width:100%}
+.app.simple .msg-col{max-width:min(860px,94%)}
+.app.simple .msg-user .msg-col{max-width:80%}
+.app.simple .ans-title{font-size:21px}
+.app.simple .ans-lead{font-size:17px;line-height:1.85}
+.app.simple .ans-cell dd{font-size:16px;line-height:1.8}
+.app.simple .ans-cell dt{font-size:12.5px}
+.app.simple .ans-block h4{font-size:15px}
+.app.simple .ans-block li{font-size:16px;line-height:1.85}
+.app.simple .ans-tip{font-size:15px;line-height:1.8}
+.app.simple .ans-src,.app.simple .fineprint{font-size:12.5px}
+.app.simple .ans-grid{grid-template-columns:1fr}
+.app.simple .chip{font-size:15px;padding:9px 16px}
+.app.simple .ask-row input{font-size:17px;padding:14px 16px}
+.app.simple .send-btn{height:50px;font-size:17px;padding:0 26px}
+.app.simple .icon-btn{width:50px;height:50px}
+.app.simple .tab{font-size:15px;padding:9px 22px}
+.app.simple .suggest-chip{font-size:14px;padding:8px 14px}
+.app.simple .grain{display:none}
+
+/* ---------------- 动画 ---------------- */
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes blink{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-2px)}}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-.4deg)}50%{transform:translateY(-6px) rotate(.6deg)}}
+@keyframes sway{0%,100%{transform:rotate(-1.4deg)}50%{transform:rotate(1.4deg)}}
+@keyframes sunbreath{0%,100%{transform:scale(1);opacity:.95}50%{transform:scale(1.06);opacity:1}}
+@keyframes sparkle{0%{opacity:0;transform:scale(.4)}40%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.5) translateY(-8px)}}
+
+/* ---------------- 响应式 ---------------- */
+@media (max-width:1180px){
+  .workspace{grid-template-columns:minmax(0,1fr) 336px}
+  .app{padding:12px 16px 8px}
+}
+@media (max-width:980px){
+  .app{height:auto;min-height:100dvh}
+  .workspace{grid-template-columns:1fr;gap:12px}
+  .chat-panel{height:calc(100dvh - 200px);min-height:480px}
+  .pet-panel{max-height:none}
+  .stage{height:230px}
+  .kb-list{grid-template-columns:1fr}
+  .facts{grid-template-columns:1fr}
+  .kb-hero{flex-direction:column;align-items:flex-start;gap:14px}
+  .kb-hero-stats{gap:26px}
+  .kb-view{overflow:visible}
+  .app.simple .chat-panel{height:calc(100dvh - 170px)}
+}
+@media (max-width:660px){
+  .app{padding:10px 12px 8px;gap:10px}
+  .topbar{flex-wrap:wrap;gap:10px}
+  .tabs{margin-left:0;order:3;width:100%;justify-content:center}
+  .top-actions{margin-left:auto}
+  .brand-text small{display:none}
+  .chat-panel{height:calc(100dvh - 210px);min-height:430px}
+  .messages{padding:16px 14px 4px;gap:14px}
+  .msg-col{max-width:88%}
+  .avatar{width:36px;height:36px}
+  .ans-grid{grid-template-columns:1fr}
+  .composer{padding:9px 12px 10px}
+  .ask-row input{font-size:16px;padding:11px 13px}
+  .send-btn{padding:0 16px}
+  .fineprint{font-size:10.8px}
+  .kb-hero{padding:16px}
+  .kb-hero-stats b{font-size:20px}
+  .grain{display:none}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
+  .messages{scroll-behavior:auto}
+}
+
+/* ---------------- AI 状态与设置 ---------------- */
+.ai-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:11.5px;padding:5px 10px;border-radius:999px;
+  border:1px solid var(--line-2);background:var(--card-2);color:var(--muted);
+  white-space:nowrap;
+}
+.ai-badge::before{content:"";width:6px;height:6px;border-radius:50%;background:#b9b19c}
+.ai-badge.is-on{background:var(--green-soft);border-color:#bcd9c0;color:var(--green-ink)}
+.ai-badge.is-on::before{background:var(--green-2);box-shadow:0 0 0 3px rgba(63,151,99,.18)}
+.ai-badge.is-warn{background:var(--amber-soft);border-color:#efdcae;color:var(--amber-ink)}
+.ai-badge.is-warn::before{background:var(--amber)}
+
+.field{display:flex;flex-direction:column;gap:5px;margin:10px 0}
+.field > span{font-size:12px;color:var(--muted)}
+.field input[type=text],.field input[type=password],.field select{
+  border:1px solid var(--line-2);border-radius:9px;padding:9px 11px;
+  font-family:inherit;font-size:13px;background:#fff;color:var(--ink);
+}
+.field input:focus,.field select:focus{outline:none;border-color:var(--green-2);box-shadow:0 0 0 3px rgba(63,151,99,.12)}
+.field input[type=checkbox]{width:18px;height:18px;accent-color:var(--green)}
+.ai-status{
+  margin:10px 0 4px;padding:8px 11px;border-radius:9px;
+  background:var(--card-2);border:1px solid var(--line);
+  font-size:12px;color:var(--muted);line-height:1.6;
+}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+.save-btn{
+  appearance:none;cursor:pointer;border:0;border-radius:10px;
+  background:linear-gradient(160deg,#38915e,#2c7049);color:#fff;
+  padding:9px 18px;font-size:13.5px;font-weight:600;
+}
+.save-btn:hover{filter:brightness(1.05)}
+.foot a{color:var(--green-ink);text-decoration:none;border-bottom:1px dashed #bcd9c0}
+.ans-feedback{display:flex;gap:8px;align-items:center;margin-top:2px}
+.ans-feedback .mini-act[disabled]{opacity:.5;cursor:default}
+.ai-tag{
+  font-size:10.5px;padding:2px 7px;border-radius:999px;
+  background:#eef1fa;color:#3d4a75;border:1px solid #d9dff0;white-space:nowrap;
+}
+.ans-ai-note{font-size:11.5px;color:#5d6b8a;margin-top:2px}
+@media (max-width:660px){
+  .ai-badge{font-size:10.5px;padding:4px 8px}
+}
+
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <header class="topbar">
+    <a class="brand" href="#" id="brandHome" aria-label="农知精灵">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none">
+          <path d="M24 42c0-12 4-20 14-26" stroke="#2f7d4f" stroke-width="3" stroke-linecap="round"/>
+          <path d="M24 42c0-9-3-15-11-19" stroke="#5fa771" stroke-width="3" stroke-linecap="round"/>
+          <path d="M38 16c1 9-4 14-13 14 0-8 5-13 13-14Z" fill="#7ec48a"/>
+          <path d="M13 23c7 1 11 5 11 13-7 0-11-5-11-13Z" fill="#4c9a63"/>
+          <circle cx="38" cy="13" r="3" fill="#e8b44a"/>
+        </svg>
+      </span>
+      <span class="brand-text">
+        <strong>农知精灵</strong>
+        <small>山东作物问答 · 植物萌宠</small>
+      </span>
+    </a>
+
+    <nav class="tabs" role="tablist" aria-label="主导航">
+      <button class="tab is-active" role="tab" aria-selected="true" data-view="chat">问一问</button>
+      <button class="tab" role="tab" aria-selected="false" data-view="kb">知识库</button>
+    </nav>
+
+    <div class="top-actions">
+      <span class="ai-badge" id="aiBadge" title="大模型状态">AI 未启用</span>
+      <button class="ghost-btn" id="btnAi" type="button">AI 设置</button>
+      <button class="ghost-btn" id="btnTrust" type="button">为什么可信</button>
+      <button class="switch-btn" id="btnSimple" type="button" aria-pressed="false">
+        <span class="sw" aria-hidden="true"></span><span>大字模式</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ============ 问答视图 ============ -->
+  <main class="workspace" id="view-chat">
+
+    <section class="chat-panel" aria-label="AI 问答">
+      <div class="chat-head">
+        <div class="crop-chips" id="cropChips" aria-label="常见作物"></div>
+      </div>
+
+      <div class="messages" id="messages" aria-live="polite" aria-relevant="additions"></div>
+
+      <div class="composer">
+        <div class="suggest" id="suggest"></div>
+        <form class="ask-row" id="askForm" autocomplete="off">
+          <button type="button" class="icon-btn" id="btnMic" title="语音提问" aria-label="语音提问">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+          <input id="askInput" type="text" placeholder="说说作物 + 部位 + 症状，例如：番茄幼果长灰毛" aria-label="输入问题" maxlength="120">
+          <button type="submit" class="send-btn" id="btnSend">发送</button>
+        </form>
+        <p class="fineprint">
+          答案只来自内置审核知识库（25 条），不联网检索、不虚构；匹配不上会直接说不知道。用药请以农药标签和当地农技部门指导为准。
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ 宠物面板 ============ -->
+    <aside class="pet-panel" id="petPanel" aria-label="植物萌宠">
+      <div class="pet-head">
+        <div>
+          <h2>我的植物</h2>
+          <p><b>小绿</b> · <span id="stageName">幼苗</span></p>
+        </div>
+        <div class="pet-head-actions">
+          <button class="mini-btn" id="btnPetHelp" type="button" title="玩法说明">玩法</button>
+          <button class="mini-btn" id="btnPetReset" type="button" title="重新种一株">重种</button>
+        </div>
+      </div>
+
+      <div class="stage" id="stage">
+        <div class="stage-sun" aria-hidden="true"></div>
+        <div class="stage-hills" aria-hidden="true"></div>
+        <div class="pet-bubble" id="bubble"></div>
+        <div class="plant" id="plant"></div>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-top"><span>健康</span><b id="healthVal">100</b></div>
+          <div class="bar"><i id="healthBar" class="bar-health"></i></div>
+        </div>
+        <div class="stat">
+          <div class="stat-top"><span>成长</span><b id="growthVal">0</b></div>
+          <div class="bar"><i id="growthBar" class="bar-growth"></i></div>
+        </div>
+        <div class="stat-mini">
+          <span>答对 <b id="okCount">0</b></span>
+          <span>连对 <b id="streakCount">0</b></span>
+          <span>徽章 <b id="badgeCount">0</b></span>
+        </div>
+      </div>
+
+      <div class="quiz" id="quiz" hidden></div>
+
+      <div class="care" id="care">
+        <button type="button" data-care="water"><span aria-hidden="true">💧</span>浇水</button>
+        <button type="button" data-care="sun"><span aria-hidden="true">☀️</span>晒太阳</button>
+        <button type="button" data-care="soil"><span aria-hidden="true">🪴</span>松土</button>
+      </div>
+
+      <div class="badges" id="badges" aria-label="已获得徽章"></div>
+      <div class="diary" id="diary" hidden></div>
+    </aside>
+  </main>
+
+  <!-- ============ 知识库视图 ============ -->
+  <main class="kb-view" id="view-kb" hidden>
+    <section class="kb-hero">
+      <div class="kb-hero-copy">
+        <h2>知识库</h2>
+        <p>这里是小穗全部“知道”的东西：山东 10 类常见作物、25 条病虫害与农事要点。每一条都写了怎么认、为什么发生、怎么处理、注意什么。</p>
+      </div>
+      <div class="kb-hero-stats">
+        <div><b>10</b><span>类作物</span></div>
+        <div><b>25</b><span>条知识</span></div>
+        <div><b>0</b><span>条编造</span></div>
+      </div>
+    </section>
+
+    <section class="facts" id="facts" aria-label="给青少年的农业冷知识"></section>
+
+    <section class="kb-browse">
+      <div class="kb-tools">
+        <div class="crop-filter" id="cropFilter"></div>
+        <label class="kb-search">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m16 16 4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <input id="kbSearch" type="search" placeholder="搜作物或症状，如：黄粉、烂根、灰毛" aria-label="搜索知识库">
+        </label>
+      </div>
+      <div class="kb-list" id="kbList"></div>
+      <p class="kb-empty" id="kbEmpty" hidden>没有找到相关条目。换个说法试试，比如“小麦 黄粉”。</p>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <span>农知精灵 v1.1 · 山东农业大学 · 虫儿飞</span>
+    <span>内置知识库 25 条 · 依据公开农技资料整理</span>
+    <span><a href="#" id="openReview">人工复核台</a></span>
+    <span>仅作科普与田间参考，不替代当地农技部门诊断</span>
+  </footer>
+</div>
+
+<!-- ============ 弹层 ============ -->
+<div class="modal" id="modal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="modal-close" id="modalClose" type="button" aria-label="关闭">×</button>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- ============ AI 设置 ============ -->
+<div class="modal" id="aiModal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="aiTitle">
+    <button class="modal-close" id="aiClose" type="button" aria-label="关闭">×</button>
+    <div class="modal-body">
+      <h2 id="aiTitle">AI 设置</h2>
+      <p class="sub">大模型只负责“听懂”，不负责“知道”。不填也能用，会自动退回纯检索。</p>
+      <label class="field"><span>启用大模型归一化</span><input type="checkbox" id="aiEnabled"></label>
+      <label class="field"><span>接口地址</span><input id="aiEndpoint" type="text" placeholder="/api/chat"></label>
+      <label class="field"><span>模型</span><input id="aiModel" type="text" placeholder="deepseek-chat"></label>
+      <label class="field"><span>API Key（可留空，由服务端环境变量提供）</span><input id="aiKey" type="password" placeholder="sk-..."></label>
+      <label class="field"><span>提示词版本</span><select id="aiPrompt"></select></label>
+      <div class="ai-status" id="aiStatus">未检测</div>
+      <div class="modal-actions">
+        <button class="ghost-btn" id="aiTest" type="button">测试连接</button>
+        <button class="save-btn" id="aiSave" type="button">保存并关闭</button>
+      </div>
+      <p class="fineprint">本机演示：在应用目录运行 <code>node server.js</code>；没有 Key 时可用 <code>MOCK_LLM=1 node server.js</code> 走固定返回。</p>
+    </div>
+  </div>
+</div>
+
+
+<style>
+.review-modal-card{width:min(1000px,94vw);max-height:88vh;overflow-y:auto}
+.rv-head h2{margin:0 0 4px;font-size:19px}
+.rv-head p{margin:0 0 14px;font-size:12px;color:#7d7765}
+.rv-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.rv-stats>div{background:#faf6ea;border:1px solid #e6ddc9;border-radius:10px;padding:9px 11px}
+.rv-stats b{display:block;font-size:20px;color:#1e5535;font-variant-numeric:tabular-nums}
+.rv-stats span{font-size:11px;color:#7d7765}
+.rv-sec{border-top:1px dashed #e6ddc9;padding-top:12px;margin-top:12px}
+.rv-sec h3{margin:0 0 4px;font-size:13.5px;letter-spacing:.04em;color:#2f7d4f}
+.rv-hint{margin:0 0 10px;font-size:11.8px;color:#7d7765;line-height:1.6}
+.rv-tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+#reviewModal .review-item{border:1px solid #e6ddc9;border-radius:10px;padding:10px;margin-bottom:8px;background:#faf6ea}
+#reviewModal .review-head{display:flex;align-items:center;gap:8px;font-size:13px;flex-wrap:wrap}
+#reviewModal .review-head .ts{margin-left:auto;font-size:11px;color:#8a8270}
+#reviewModal .review-meta{font-size:11.5px;color:#7d7765;margin-top:4px}
+#reviewModal .review-note{font-size:12px;margin-top:6px;background:#fff;border-left:3px solid #d9a441;padding:6px 9px;border-radius:6px}
+#reviewModal .review-edit{width:100%;margin-top:8px;border:1px solid #d9cfb6;border-radius:8px;padding:7px 9px;font-family:inherit;font-size:12.5px;resize:vertical}
+#reviewModal .review-actions{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap}
+#reviewModal .pill{font-size:10.5px;padding:2px 8px;border-radius:999px;border:1px solid transparent}
+#reviewModal .pill.ok{background:#e8f2e7;color:#1e5535;border-color:#cfe3ce}
+#reviewModal .pill.no{background:#fbe9e3;color:#8f3a27;border-color:#ecc4b8}
+#reviewModal .pill.wait{background:#fbf0d6;color:#8a6416;border-color:#efdcae}
+#reviewModal .prompt{border:1px solid #e6ddc9;border-radius:10px;padding:10px;margin-bottom:8px}
+#reviewModal .prompt.on{border-color:#bcd9c0;background:#f6fbf5}
+#reviewModal .prompt-head{display:flex;gap:8px;align-items:center;font-size:12.5px}
+#reviewModal .prompt p{margin:3px 0 7px;font-size:11.5px;color:#7d7765}
+#reviewModal .prompt pre{margin:0;background:#2b2823;color:#e8e3d6;padding:9px 11px;border-radius:8px;font-size:11px;line-height:1.6;white-space:pre-wrap;word-break:break-word}
+#reviewModal .empty{color:#7d7765;font-size:12.5px;padding:6px 0}
+#reviewModal .log-table{width:100%;border-collapse:collapse;font-size:11px}
+#reviewModal .log-table th,#reviewModal .log-table td{border-bottom:1px solid #e6ddc9;padding:5px 7px;text-align:left;vertical-align:top}
+#reviewModal .log-table th{color:#7d7765;font-size:10.5px}
+</style>
+
+<!-- ============ 人工复核台（内嵌） ============ -->
+<div class="modal" id="reviewModal" hidden>
+  <div class="modal-card review-modal-card" role="dialog" aria-modal="true">
+    <button class="modal-close" id="reviewClose" type="button" aria-label="关闭">×</button>
+    <div class="rv-head">
+      <h2>人工复核台</h2>
+      <p>纠错 → 复核 → 改写 → 导出留痕　|　山东农业大学 · 虫儿飞 · 农知精灵</p>
+    </div>
+    <div class="rv-stats">
+      <div><b id="statAsks">0</b><span>累计提问</span></div>
+      <div><b id="statRefuses">0</b><span>拒答</span></div>
+      <div><b id="statQueue">0</b><span>待复核</span></div>
+      <div><b id="statExports">0</b><span>导出</span></div>
+    </div>
+    <section class="rv-sec">
+      <h3>① 待复核队列</h3>
+      <p class="rv-hint">在问答页点「这条不对」提交后进入这里。可改写、通过或驳回，形成人工干预记录。</p>
+      <div id="queue"></div>
+      <div class="rv-tools">
+        <button class="mini-act" id="exportAll" type="button">导出复核记录（Word）</button>
+        <button class="mini-act" id="exportLogs" type="button">导出调用日志（JSON）</button>
+      </div>
+    </section>
+    <section class="rv-sec">
+      <h3>② 提示词版本</h3>
+      <p class="rv-hint">大模型只做「听懂」，不产出事实。每次调用都记录用了哪一版。</p>
+      <div id="prompts"></div>
+    </section>
+    <section class="rv-sec">
+      <h3>③ 调用日志</h3>
+      <div id="logs"></div>
+    </section>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<noscript>
+  <p style="padding:24px;font-family:system-ui">本应用需要启用 JavaScript 才能使用。</p>
+</noscript>
+
+<script>
+/* ===========================================================
+   农知精灵 · 内置知识库
+   说明：条目依据公开农技资料（病虫害测报与防治技术要点）整理，
+   面向山东常见作物，语言做了农户口语化处理。
+   应用只从这里取答案 —— 检索不到就明确说不知道，这是防幻觉的核心。
+   =========================================================== */
+(function (g) {
+  'use strict';
+
+  var CROPS = [
+    {
+      id: 'wheat', name: '小麦', em: '🌾', color: '#d9a441',
+      tag: '山东第一大粮食作物，冬小麦为主',
+      season: '10月上中旬播种 · 次年6月收获',
+      region: '鲁西、鲁北平原集中连片',
+      fun: '一粒麦种能分蘖出 5—8 个麦穗；麦芒不是装饰，是叶片“变”的，能光合、能防虫。'
+    },
+    {
+      id: 'corn', name: '玉米', em: '🌽', color: '#d8a13b',
+      tag: '夏玉米为主，与小麦一年两熟',
+      season: '6月麦收后播种 · 9—10月收获',
+      region: '全省，鲁西北、鲁中面积大',
+      fun: '玉米的“胡子”是花丝，一根花丝连着一颗籽粒；玉米粒在穗上总是成双数行。'
+    },
+    {
+      id: 'peanut', name: '花生', em: '🥜', color: '#c08a4e',
+      tag: '山东传统优势作物，胶东丘陵主产',
+      season: '4月下旬—5月上旬播种 · 9月收获',
+      region: '烟台、威海、临沂、青岛',
+      fun: '花生开花后，子房柄会向下钻进土里结果，所以叫“落花生”。'
+    },
+    {
+      id: 'garlic', name: '大蒜', em: '🧄', color: '#b9a7c9',
+      tag: '金乡大蒜，出口量全国领先',
+      season: '9月底—10月上旬播种 · 次年5月收蒜薹、6月收蒜头',
+      region: '济宁金乡、临沂兰陵',
+      fun: '大蒜捣碎后放 10 分钟再吃，大蒜素才充分生成——这就是“先拍后放”。'
+    },
+    {
+      id: 'apple', name: '苹果', em: '🍎', color: '#c9584c',
+      tag: '烟台苹果，百年栽培史',
+      season: '3月萌芽 · 5月疏果套袋 · 9—11月采收',
+      region: '烟台、威海、沂蒙山区',
+      fun: '苹果套袋不只为了好看：挡病虫、减农药、防果锈，是“物理防护服”。'
+    },
+    {
+      id: 'veg', name: '设施蔬菜', em: '🍅', color: '#cf6b4a',
+      tag: '寿光蔬菜，中国蔬菜之乡',
+      season: '越冬茬 9—10月定植 · 冬春茬 11—12月',
+      region: '潍坊寿光、聊城莘县',
+      fun: '番茄开花后要靠熊蜂或振动授粉才能坐果整齐；棚里放一箱熊蜂，比蘸花省工。'
+    },
+    {
+      id: 'ginger', name: '生姜', em: '🌿', color: '#c2a45a',
+      tag: '莱芜生姜、安丘大姜',
+      season: '4月催芽播种 · 10月收获',
+      region: '济南莱芜、潍坊安丘',
+      fun: '姜不是根，是地下的变态茎（根茎）；我们吃的“姜块”其实是它的“储藏仓库”。'
+    },
+    {
+      id: 'scallion', name: '大葱', em: '🧅', color: '#8fa864',
+      tag: '章丘大葱，葱白能长到一米',
+      season: '9月育苗 · 次年6月定植 · 10—11月收获',
+      region: '济南章丘、潍坊',
+      fun: '章丘大葱的葱白靠三次培土“捂”出来——不见光，叶鞘就不绿，越捂越白越甜。'
+    },
+    {
+      id: 'sweet', name: '甘薯', em: '🍠', color: '#b56a4a',
+      tag: '泗水地瓜、临沂甘薯',
+      season: '4—5月栽插 · 9—10月收获',
+      region: '济宁泗水、临沂、泰安',
+      fun: '甘薯和马铃薯不是一家：甘薯吃的是根，马铃薯吃的是茎。'
+    },
+    {
+      id: 'cotton', name: '棉花', em: '🧵', color: '#9aa9b8',
+      tag: '鲁棉系列品种，鲁西北棉区',
+      season: '4月中下旬播种 · 9—10月吐絮',
+      region: '德州、聊城、菏泽',
+      fun: '棉花的花一天三变色：早上白、下午粉、第二天变红，所以又叫“一日三变”。'
+    }
+  ];
+
+  var KB = [
+    /* ---------------- 小麦 ---------------- */
+    {
+      id: 'WHEAT-01', cropId: 'wheat', crop: '小麦', cat: '病害',
+      title: '小麦条锈病', level: '重点',
+      aliases: ['条锈病', '条锈', '黄锈', '黄疸', '锈病'],
+      keywords: ['黄粉', '黄条', '叶脉', '孢子堆', '铁锈'],
+      season: '3—5月，气温回升、多雨多露时',
+      short: '叶片上出现沿叶脉排列的鲜黄色条状粉斑，是条锈病，必须“见病就打”。',
+      symptoms: '叶片正面出现鲜黄色、沿叶脉排列的条状孢子堆，像一条条黄粉线，手一摸会沾上黄粉；严重时叶片提早枯黄，麦粒灌浆不足。',
+      cause: '条锈菌随高空气流从外地传入；山东春季若连续阴雨、结露时间长，感病品种田块容易流行。',
+      control: [
+        '见病就打：发现中心病株或病叶立即喷药，不要等全田发病。',
+        '药剂可选戊唑醇、丙环唑、三唑酮等三唑类，按标签推荐剂量兑水叶面喷雾。',
+        '重发田块间隔 7—10 天补喷一次，不同作用机理的药剂轮换使用。'
+      ],
+      tip: '三唑类药剂在拔节后按推荐量使用，别随意加量控旺过度；注意安全间隔期。'
+    },
+    {
+      id: 'WHEAT-02', cropId: 'wheat', crop: '小麦', cat: '病害',
+      title: '小麦赤霉病', level: '重点',
+      aliases: ['赤霉病', '赤霉', '白穗', '烂麦头'],
+      keywords: ['粉红', '霉层', '小穗', '枯白', '扬花'],
+      season: '抽穗扬花期（4月下旬—5月上旬）遇连阴雨',
+      short: '扬花期遇雨，穗上出现粉红色霉层和“白穗”，关键是“见花打药”，错过窗口就救不回来。',
+      symptoms: '小穗基部出现水渍状褐斑，随后整个小穗枯黄；潮湿时病部有粉红色霉层，后期产生黑色小颗粒。籽粒干瘪发白，有毒素风险。',
+      cause: '小麦扬花期遇到 2 天以上连阴雨或高湿，赤霉病菌从花器侵入；秸秆带菌、偏施氮肥、密度过大都会加重。',
+      control: [
+        '见花打药：抽穗扬花期是唯一关键窗口，雨前或雨隙抢喷。',
+        '药剂可选氰烯菌酯、丙硫菌唑、戊唑醇、咪鲜胺等，按标签剂量使用。',
+        '扬花期遇连续阴雨，5—7 天后补喷一次，优先选耐雨水冲刷的剂型。'
+      ],
+      tip: '病粒含呕吐毒素，收后单独存放、不要混入口粮；秸秆还田前最好粉碎深埋。'
+    },
+    {
+      id: 'WHEAT-03', cropId: 'wheat', crop: '小麦', cat: '虫害',
+      title: '小麦蚜虫', level: '常见',
+      aliases: ['蚜虫', '腻虫', '麦蚜', '穗蚜'],
+      keywords: ['蜜露', '发亮', '发黏', '小绿虫', '聚集'],
+      season: '穗期（4—5月）',
+      short: '麦穗和叶片上聚集成片的绿色或黑色小虫，分泌物让叶面发亮发黏，就是麦蚜。',
+      symptoms: '麦穗、叶片上聚集大量绿色或黑色小虫，分泌蜜露使叶面发亮发黏；严重时叶片卷曲，灌浆受影响。',
+      cause: '气温回升后蚜虫快速繁殖；天敌少、偏施氮肥的田块发生重。',
+      control: [
+        '百穗蚜量达到防治指标时用药，可选吡虫啉、啶虫脒、抗蚜威等。',
+        '与杀菌剂、叶面肥一起“一喷三防”，省工省药。',
+        '田边留草、保护瓢虫和草蛉等天敌，天敌多时挑治。'
+      ],
+      tip: '蚜虫容易产生抗性，同一季不要连续使用同一种药剂。'
+    },
+    {
+      id: 'WHEAT-04', cropId: 'wheat', crop: '小麦', cat: '栽培',
+      title: '小麦倒春寒（春季冻害）', level: '常见',
+      aliases: ['倒春寒', '冻害', '霜冻', '低温', '冷害'],
+      keywords: ['发白', '像开水烫', '干尖', '幼穗', '缺粒'],
+      season: '3—4月拔节期',
+      short: '拔节后突然降温，叶片像被开水烫过一样发白干枯、幼穗冻伤，这是倒春寒。',
+      symptoms: '叶片像被开水烫过，发白、干枯；幼穗冻伤，抽穗后出现白穗、缺粒，严重时整株枯死。',
+      cause: '春季气温回升后又突然降温；小麦拔节后抗寒力明显下降，同样的低温，拔节越晚损失越大。',
+      control: [
+        '关注天气预报：降温前浇水，喷施磷酸二氢钾加芸苔素内酯，提高抗逆性。',
+        '受冻后及时追肥浇水、喷叶面肥，促进恢复。',
+        '严重冻害田块评估后改种短季作物，减少损失。'
+      ],
+      tip: '预防比补救划算：拔节前后的水肥管理和天气预报，决定冻害损失大小。'
+    },
+
+    /* ---------------- 玉米 ---------------- */
+    {
+      id: 'CORN-01', cropId: 'corn', crop: '玉米', cat: '虫害',
+      title: '玉米草地贪夜蛾', level: '重点',
+      aliases: ['草地贪夜蛾', '贪夜蛾', '秋黏虫'],
+      keywords: ['心叶', '窗孔', '虫粪', '倒Y', '钻心', '半透明'],
+      season: '夏玉米苗期至喇叭口期（6—8月）',
+      short: '心叶被啃出成排半透明“窗孔”，心叶里藏着头部有倒“Y”纹的虫子，是草地贪夜蛾。',
+      symptoms: '心叶被啃出成排的半透明“窗孔”和不规则大孔洞，心叶里藏着幼虫；幼虫头部有明显倒“Y”形纹，体末节有 4 个黑点。',
+      cause: '成虫随季风远距离迁飞，山东夏玉米区 6—8 月是主要受害期。',
+      control: [
+        '用性诱剂、杀虫灯监测成虫，发现迁入及时防治。',
+        '抓住低龄幼虫期（1—3 龄），用氯虫苯甲酰胺、甲维盐、虫螨腈等，药液重点喷入心叶。',
+        '连片种植区统防统治，早晚施药效果更好。'
+      ],
+      tip: '高龄幼虫钻入心叶后防效明显下降，务必“治早治小”；注意药剂轮换，延缓抗性。'
+    },
+    {
+      id: 'CORN-02', cropId: 'corn', crop: '玉米', cat: '病害',
+      title: '玉米大斑病', level: '常见',
+      aliases: ['大斑病', '叶斑', '长梭形'],
+      keywords: ['梭形', '长条斑', '黄褐', '连片', '下部叶'],
+      season: '7—8月，抽雄前后高温高湿',
+      short: '叶片上出现长梭形黄褐色病斑，多个病斑连片后叶片枯死，是玉米大斑病。',
+      symptoms: '叶片出现长梭形黄褐色病斑，边缘不清晰；多个病斑连片后叶片枯死，通常从下部叶片向上发展。',
+      cause: '病菌随病残体越冬；夏季多雨、种植过密、氮肥偏多时容易流行。',
+      control: [
+        '选用抗病品种，合理密植，避免偏施氮肥。',
+        '发病初期用吡唑醚菌酯、苯醚甲环唑、丙环唑等叶面喷雾。',
+        '重发田块 7—10 天后再喷一次，可与杀虫剂混用兼治玉米螟。'
+      ],
+      tip: '病残体是主要菌源，收获后深翻或把秸秆粉碎还田，能减轻来年发病。'
+    },
+    {
+      id: 'CORN-03', cropId: 'corn', crop: '玉米', cat: '虫害',
+      title: '玉米螟', level: '常见',
+      aliases: ['玉米螟', '钻心虫', '箭杆虫'],
+      keywords: ['排孔', '蛀孔', '虫粪', '雄穗折断', '穗柄'],
+      season: '心叶期至穗期（6—8月）',
+      short: '心叶展开后有一排整齐小孔、茎秆有蛀孔和虫粪、雄穗易折，是玉米螟。',
+      symptoms: '心叶期叶片被蛀成排孔，抽雄后雄穗折断；茎秆有蛀孔和虫粪，穗柄受害后容易折、果穗下垂。',
+      cause: '越冬幼虫在秸秆、穗轴中化蛹；成虫把卵产在心叶，幼虫孵化后钻蛀危害。',
+      control: [
+        '心叶末期用辛硫磷颗粒剂或 Bt 颗粒剂丢心，是防治关键。',
+        '成虫期用杀虫灯、性诱剂诱杀，或释放赤眼蜂寄生卵块。',
+        '秸秆粉碎还田、处理穗轴，压低越冬虫源。'
+      ],
+      tip: '丢心要丢进喇叭口里；撒在叶面上基本无效。'
+    },
+
+    /* ---------------- 花生 ---------------- */
+    {
+      id: 'PEANUT-01', cropId: 'peanut', crop: '花生', cat: '病害',
+      title: '花生叶斑病（褐斑、黑斑）', level: '常见',
+      aliases: ['叶斑病', '褐斑病', '黑斑病', '落叶'],
+      keywords: ['黄晕', '圆斑', '褐斑', '黑斑', '掉叶'],
+      season: '7—9月，高温多雨',
+      short: '叶片出现带黄晕的褐色或黑褐色圆斑，严重时下部叶片大量脱落，是花生叶斑病。',
+      symptoms: '叶片出现褐色或黑褐色圆形病斑，周围有黄色晕圈；严重时叶片自下而上脱落，荚果不饱满。',
+      cause: '病菌随病残体越冬，雨季借风雨传播；连作田、密度大的田块发病重。',
+      control: [
+        '与玉米、小麦等禾本科轮作 2—3 年，清除病残体。',
+        '发病初期用苯醚甲环唑、戊唑醇、代森锰锌等喷雾，7—10 天一次，连喷 2—3 次。',
+        '增施磷钾肥、控旺防倒，改善田间通风透光。'
+      ],
+      tip: '叶斑病从下部老叶开始，打药要喷到叶背和下部叶片。'
+    },
+    {
+      id: 'PEANUT-02', cropId: 'peanut', crop: '花生', cat: '病害',
+      title: '花生白绢病', level: '重点',
+      aliases: ['白绢病', '白毛病', '菌核'],
+      keywords: ['白丝', '绢丝', '白毛', '长白毛', '白霉', '根部', '菌核', '茎基腐烂', '突然萎蔫'],
+      season: '6—8月，高温高湿',
+      short: '茎基部腐烂并长出一层白色绢丝状菌丝，植株突然萎蔫，是花生白绢病。',
+      symptoms: '茎基部变褐腐烂，表面覆盖白色绢丝状菌丝，后期结出油菜籽大小的褐色菌核；植株迅速萎蔫枯死。',
+      cause: '病菌在土壤和病残体中存活多年；连作、地势低洼积水、土壤偏酸时发病重。',
+      control: [
+        '与禾本科作物轮作 3 年以上，起垄种植、雨后及时排水。',
+        '播种前用噻呋酰胺等药剂拌种或包衣。',
+        '发现病株及时拔除带出田外，病穴撒生石灰，周围植株用药剂灌根。'
+      ],
+      tip: '白绢病一旦成片就很难救，重点在轮作和拌种预防。'
+    },
+    {
+      id: 'PEANUT-03', cropId: 'peanut', crop: '花生', cat: '虫害',
+      title: '花生蛴螬', level: '常见',
+      aliases: ['蛴螬', '金龟子', '地下害虫', '白胖虫'],
+      keywords: ['空壳', '咬根', '荚果孔洞', '土里', '白虫'],
+      season: '6—9月（幼虫危害荚果）',
+      short: '荚果被啃出孔洞、空壳增多，翻土能看到白色弯曲的幼虫，是蛴螬。',
+      symptoms: '荚果被啃食出孔洞、空壳增多，根系被咬断，植株生长不良；翻土可见白色弯曲的幼虫。',
+      cause: '金龟子成虫把卵产在土中；未腐熟粪肥、秸秆多的地块虫量大。',
+      control: [
+        '播种时随犁施入辛硫磷颗粒剂，或用药剂拌种。',
+        '成虫发生期用杀虫灯、糖醋液诱杀金龟子。',
+        '幼虫期用辛硫磷、毒死蜱等药剂灌根，重点在结荚期。'
+      ],
+      tip: '严禁使用未腐熟的鸡粪、牛粪——那是蛴螬的“产房”。'
+    },
+
+    /* ---------------- 大蒜 ---------------- */
+    {
+      id: 'GARLIC-01', cropId: 'garlic', crop: '大蒜', cat: '虫害',
+      title: '大蒜蒜蛆', level: '重点',
+      aliases: ['蒜蛆', '葱蝇', '根蛆', '地蛆'],
+      keywords: ['蒜瓣', '蛀空', '发臭', '白蛆', '黄叶', '萎蔫'],
+      season: '春季 4—5 月、秋季 9—10 月',
+      short: '蒜叶发黄萎蔫，拔起蒜株蒜瓣基部被蛀空发臭，里面有白色小蛆，是蒜蛆。',
+      symptoms: '幼虫从蒜瓣基部蛀入，蒜瓣变软腐烂、有臭味；叶片发黄、萎蔫，严重时整株枯死，拔起可见白色小蛆。',
+      cause: '葱蝇成虫在蒜苗基部产卵；未腐熟粪肥和潮湿土壤会招引成虫。',
+      control: [
+        '成虫盛发期用糖醋液或粘虫板诱杀，减少产卵。',
+        '幼虫初期用辛硫磷、噻虫嗪等药剂灌根，药液要渗到蒜瓣周围。',
+        '施用充分腐熟的有机肥，避免生粪招虫。'
+      ],
+      tip: '蒜蛆已蛀入蒜瓣后灌根效果差，要抓住幼虫初孵期。'
+    },
+    {
+      id: 'GARLIC-02', cropId: 'garlic', crop: '大蒜', cat: '病害',
+      title: '大蒜叶枯病', level: '常见',
+      aliases: ['叶枯病', '紫斑病', '干尖', '叶尖干枯'],
+      keywords: ['干尖', '紫褐', '病斑', '黑色霉层', '从叶尖'],
+      season: '3—5月，返青后多雨',
+      short: '叶尖先黄枯、向下扩展，叶片出现紫褐色病斑，是大蒜叶枯病（常与紫斑病混发）。',
+      symptoms: '叶尖先变黄干枯，向下扩展；叶片出现紫褐色病斑，潮湿时有黑色霉层，严重时全叶枯死。',
+      cause: '病菌随病残体越冬；春季多雨、田间湿度大、偏施氮肥时流行。',
+      control: [
+        '与非葱蒜类作物轮作 2—3 年，清除病残体。',
+        '发病初期用苯醚甲环唑、嘧菌酯、百菌清等喷雾，7—10 天一次。',
+        '控制氮肥、增施钾肥，雨后及时排水。'
+      ],
+      tip: '大蒜叶枯和紫斑病常常混发，可选用兼治的复配药剂。'
+    },
+
+    /* ---------------- 苹果 ---------------- */
+    {
+      id: 'APPLE-01', cropId: 'apple', crop: '苹果', cat: '病害',
+      title: '苹果腐烂病', level: '重点',
+      aliases: ['腐烂病', '烂皮病', '树皮腐烂'],
+      keywords: ['红褐', '凹陷', '酒糟味', '树皮', '黑色小点', '溃疡'],
+      season: '早春和秋季，树势弱时',
+      short: '枝干树皮出现红褐色、略凹陷的病斑，有酒糟味，是苹果腐烂病。',
+      symptoms: '枝干树皮出现红褐色、水渍状病斑，略凹陷，有酒糟味；后期病部产生黑色小点，树皮干裂翘起，严重时枝干枯死。',
+      cause: '病菌从伤口、冻伤、剪锯口侵入；树势衰弱、负载过大、冻害后发病重。',
+      control: [
+        '刮治病斑：把病组织刮到健康部位，边缘超出 1 厘米，刮后涂甲基硫菌灵、辛菌胺等药剂。',
+        '加强肥水管理，合理负载，秋季树干涂白防冻。',
+        '剪锯口及时涂保护剂，减少侵入口。'
+      ],
+      tip: '刮下的病皮要带出果园烧毁，不能留在树盘里。'
+    },
+    {
+      id: 'APPLE-02', cropId: 'apple', crop: '苹果', cat: '病害',
+      title: '苹果轮纹病', level: '常见',
+      aliases: ['轮纹病', '粗皮病', '轮纹烂果'],
+      keywords: ['轮纹', '烂果', '皮孔', '瘤状', '套袋'],
+      season: '5—8月侵染，果实近成熟期发病',
+      short: '枝干长瘤状突起、果面出现以皮孔为中心的轮纹状烂斑，是苹果轮纹病。',
+      symptoms: '枝干上出现瘤状突起、粗糙开裂；果实受害出现以皮孔为中心的褐色轮纹状烂斑，扩展快，腐烂有酒味。',
+      cause: '病菌在枝干病瘤中越冬，雨水飞溅传播；幼果期侵染、近成熟期发病。',
+      control: [
+        '刮除枝干病瘤并涂药，发芽前喷石硫合剂清园。',
+        '幼果期至套袋前是关键用药期，可选甲基硫菌灵、代森锰锌、苯醚甲环唑等。',
+        '实施果实套袋，减少侵染。'
+      ],
+      tip: '轮纹病有潜伏侵染特点，套袋前的 2—3 遍药不能省。'
+    },
+    {
+      id: 'APPLE-03', cropId: 'apple', crop: '苹果', cat: '虫害',
+      title: '苹果桃小食心虫', level: '常见',
+      aliases: ['桃小食心虫', '食心虫', '蛀果'],
+      keywords: ['蛀孔', '虫粪', '果胶', '豆沙馅', '落果'],
+      season: '6—8月',
+      short: '果面有针尖大蛀孔、孔口挂着果胶，果肉被串食成“豆沙馅”，是桃小食心虫。',
+      symptoms: '果实表面有针尖大蛀孔，孔口有泪珠状果胶；幼虫在果内串食，果肉成“豆沙馅”，蛀孔处堆积虫粪。',
+      cause: '老熟幼虫在土中结茧越冬，成虫把卵产在果面，幼虫孵化后蛀果。',
+      control: [
+        '越冬幼虫出土期地面喷药或覆盖地膜，压低虫源。',
+        '成虫期用性诱剂监测，卵孵化盛期喷甲维盐、氯虫苯甲酰胺等。',
+        '及时摘除虫果、捡拾落果深埋。'
+      ],
+      tip: '套袋要在蛀果前完成，袋口扎紧。'
+    },
+
+    /* ---------------- 设施蔬菜 ---------------- */
+    {
+      id: 'VEG-01', cropId: 'veg', crop: '设施蔬菜', cat: '病害',
+      title: '番茄灰霉病', level: '重点',
+      aliases: ['灰霉病', '灰霉', '烂果', '灰毛'],
+      keywords: ['灰白', '绒毛', '霉层', '残花', '幼果', '棚里'],
+      season: '冬春茬低温高湿（11月—次年3月）',
+      short: '幼果上长出一层灰白色绒毛状霉层、花瓣先烂，是番茄灰霉病，核心是控湿。',
+      symptoms: '花器先受害，花瓣腐烂；幼果果面出现灰白色、毛茸茸的霉层，病果易脱落；叶片从叶尖呈“V”形枯斑。',
+      cause: '低温高湿、通风不良、连阴天时棚内湿度大，病菌从残花侵入。',
+      control: [
+        '控湿是关键：晴天中午通风排湿，膜下滴灌，避免大水漫灌。',
+        '及时摘除病果、残花、病叶，带出棚外处理。',
+        '药剂可选啶酰菌胺、嘧霉胺、腐霉利等，重点喷花器和幼果。'
+      ],
+      tip: '阴天尽量用烟剂或粉尘剂，避免喷雾增加棚内湿度。'
+    },
+    {
+      id: 'VEG-02', cropId: 'veg', crop: '设施蔬菜', cat: '病害',
+      title: '黄瓜霜霉病', level: '重点',
+      aliases: ['霜霉病', '霜霉', '跑马干', '角斑'],
+      keywords: ['多角形', '叶背', '灰黑霉', '受叶脉限制', '黄褐斑'],
+      season: '春、秋两季，棚内高湿',
+      short: '叶正面出现受叶脉限制的多角形黄褐斑，叶背一层灰黑霉，是黄瓜霜霉病。',
+      symptoms: '叶正面出现受叶脉限制的多角形黄褐色病斑，叶背在潮湿时有灰黑色霉层；病斑扩展快，叶片干枯。',
+      cause: '病菌随气流传播；棚内湿度大、叶面结露时间长时暴发。',
+      control: [
+        '控温控湿：上午升温到 28℃ 左右再通风，降低叶面结露。',
+        '发病初期用烯酰吗啉、霜脲氰、氟菌·霜霉威等，重点喷叶背。',
+        '阴雨天用烟剂或粉尘剂，减少喷雾。'
+      ],
+      tip: '霜霉病和细菌性角斑病症状相似，拿不准时先送检再用药。'
+    },
+    {
+      id: 'VEG-03', cropId: 'veg', crop: '设施蔬菜', cat: '虫害',
+      title: '番茄烟粉虱与 TY 病毒', level: '重点',
+      aliases: ['烟粉虱', '白粉虱', 'TY病毒', '黄化曲叶', '小叶'],
+      keywords: ['小白飞虫', '黄化', '卷叶', '皱缩', '传染'],
+      season: '整个生长期，夏秋高温期严重',
+      short: '叶背聚集白色小飞虫，顶部新叶黄化卷曲变小——粉虱传毒引起的 TY 病毒，防虫就是防病。',
+      symptoms: '叶片背面聚集白色小飞虫，一碰就飞；植株顶部新叶黄化、卷曲、变小，坐果少，这是 TY 病毒的典型表现。',
+      cause: '烟粉虱传播 TY 病毒；苗期带毒、棚室周围杂草多时发病重。',
+      control: [
+        '防虫网加黄板：通风口加 40—60 目防虫网，每亩挂 30—40 张黄板诱杀。',
+        '用噻虫嗪、螺虫乙酯等防治粉虱，重点喷叶背。',
+        '发现病株及时拔除，不要留苗观察。'
+      ],
+      tip: 'TY 病毒没有特效药，防住粉虱才是关键；育苗期就要开始防。'
+    },
+
+    /* ---------------- 生姜 ---------------- */
+    {
+      id: 'GINGER-01', cropId: 'ginger', crop: '生姜', cat: '病害',
+      title: '生姜姜瘟病', level: '重点',
+      aliases: ['姜瘟病', '姜瘟', '青枯', '烂姜'],
+      keywords: ['菌脓', '臭味', '黄化', '卷曲', '块茎腐烂', '自下而上'],
+      season: '6—9月，高温多雨',
+      short: '叶片自下而上黄化卷曲、茎基部发软、挤压有白色菌脓，是姜瘟病（细菌性）。',
+      symptoms: '茎基部及地下块茎水渍状腐烂，挤压有白色菌脓，有臭味；叶片自下而上黄化、卷曲，最后整株枯死。',
+      cause: '姜种带菌、土壤带菌；高温高湿、积水地块传播快。',
+      control: [
+        '轮作 3 年以上，选用脱毒姜种，播前用药剂浸种。',
+        '高垄栽培、雨后及时排水，避免串灌。',
+        '发现病株立即拔除，病穴撒生石灰，周围用噻菌铜、中生菌素等灌根。'
+      ],
+      tip: '姜瘟病是细菌性病害，用杀真菌剂基本无效。'
+    },
+
+    /* ---------------- 大葱 ---------------- */
+    {
+      id: 'SCALLION-01', cropId: 'scallion', crop: '大葱', cat: '虫害',
+      title: '大葱蓟马', level: '常见',
+      aliases: ['蓟马', '葱蓟马', '白斑'],
+      keywords: ['银白', '斑点', '扭曲', '叶鞘', '细小'],
+      season: '5—7月',
+      short: '叶片出现银白色斑点、叶尖扭曲，剥开叶鞘能看到细小的淡黄色虫子，是大葱蓟马。',
+      symptoms: '叶片出现银白色斑点、条斑，叶尖扭曲；严重时叶片干枯，剥开叶鞘可见细小的淡黄色虫子。',
+      cause: '蓟马在叶鞘和心叶中隐蔽危害；干旱少雨时繁殖快。',
+      control: [
+        '挂蓝色粘虫板诱杀，覆盖防虫网。',
+        '用乙基多杀菌素、噻虫嗪等喷雾，重点喷心叶和叶鞘。',
+        '清除田间杂草，减少虫源。'
+      ],
+      tip: '蓟马昼伏夜出，傍晚施药效果更好。'
+    },
+
+    /* ---------------- 甘薯 ---------------- */
+    {
+      id: 'SWEET-01', cropId: 'sweet', crop: '甘薯', cat: '病害',
+      title: '甘薯黑斑病', level: '常见',
+      aliases: ['黑斑病', '黑膏药', '苦味'],
+      keywords: ['凹陷', '黑褐', '发苦', '烂窖', '刺状物'],
+      season: '育苗期、贮藏期',
+      short: '薯块出现黑褐色凹陷病斑、闻起来发苦、越存越烂，是甘薯黑斑病。',
+      symptoms: '薯块出现黑褐色凹陷病斑，边界清楚，闻起来发苦；病部后期长出黑色刺状物；育苗期引起烂床、死苗。',
+      cause: '种薯带菌、土壤和贮藏窖带菌；高温高湿时蔓延。',
+      control: [
+        '选用脱毒种薯、无病壮苗，种薯上床前用甲基硫菌灵等浸种。',
+        '实行 3 年以上轮作，避免连作。',
+        '贮藏期控温 10—15℃、保持通风，发现病薯及时挑出。'
+      ],
+      tip: '黑斑病薯有毒，人畜都不能食用。'
+    },
+
+    /* ---------------- 棉花 ---------------- */
+    {
+      id: 'COTTON-01', cropId: 'cotton', crop: '棉花', cat: '虫害',
+      title: '棉花棉铃虫', level: '常见',
+      aliases: ['棉铃虫', '钻心虫', '蕾铃'],
+      keywords: ['蛀孔', '虫粪', '蕾铃脱落', '缺刻', '钻蛀'],
+      season: '6—8月',
+      short: '花蕾和青铃被蛀出孔洞、堆着虫粪，蕾铃大量脱落，是棉铃虫。',
+      symptoms: '花蕾、青铃被蛀，有蛀孔和虫粪；蕾铃大量脱落，嫩叶被啃食成缺刻。',
+      cause: '成虫在嫩梢、花蕾上产卵，幼虫钻蛀蕾铃；高温干旱年份发生重。',
+      control: [
+        '用性诱剂、杨枝把诱杀成虫，田间查卵查幼虫。',
+        '卵孵化盛期至低龄幼虫期用氯虫苯甲酰胺、甲维盐、Bt 制剂等。',
+        '及时摘除虫蕾虫铃，减少虫源。'
+      ],
+      tip: '棉铃虫抗药性强，要轮换用药并严格执行安全间隔期。'
+    },
+
+    /* ---------------- 通用 ---------------- */
+    {
+      id: 'GEN-01', cropId: 'general', crop: '通用', cat: '用药',
+      title: '科学用药五条', level: '通用',
+      aliases: ['安全用药', '打药', '农药', '安全间隔期', '中毒'],
+      keywords: ['喷药', '防护', '残留', '混配', '间隔期', '洗药'],
+      season: '全年',
+      short: '对症、适时、适量、轮换、防护——这五条比“用什么药”更重要。',
+      symptoms: '（这是一条通用用药规范，不是具体病害。）',
+      cause: '乱配药、超量、不轮换、不防护，是药害、残留和中毒的主要原因。',
+      control: [
+        '对症下药：先认准病虫，再选药剂；杀菌剂治不了虫，杀虫剂治不了病。',
+        '适时适量：按标签剂量和防治指标用药，不随意加倍。',
+        '轮换用药：同一季同一药剂不超过 2—3 次，延缓抗性。',
+        '严格安全间隔期：采收前按标签停止用药。',
+        '做好防护：戴口罩手套、避风施药，药械清洗废液不乱倒。'
+      ],
+      tip: '配药时不要在田头随意“混一混”，不确定能否混用就先小面积试。'
+    },
+    {
+      id: 'GEN-02', cropId: 'general', crop: '通用', cat: '栽培',
+      title: '小麦“一喷三防”', level: '通用',
+      aliases: ['一喷三防', '一喷多防', '防早衰'],
+      keywords: ['抽穗', '灌浆', '叶面肥', '磷酸二氢钾', '省工'],
+      season: '抽穗至灌浆期',
+      short: '抽穗到灌浆期，把杀菌剂、杀虫剂、叶面肥一次喷下去，防病、防虫、防早衰。',
+      symptoms: '（这是一条农事操作要点。）',
+      cause: '这段时间是小麦产量形成的关键期，也是病虫害集中发生的时期。',
+      control: [
+        '时期：抽穗至灌浆期，重点在扬花后。',
+        '配方：杀菌剂（防赤霉、白粉、锈病）+ 杀虫剂（防蚜虫）+ 磷酸二氢钾等叶面肥。',
+        '注意：现配现用，按标签剂量，避开高温和大风，喷后遇雨及时补喷。'
+      ],
+      tip: '一喷三防不是“药越多越好”，混配种类过多容易出药害。'
+    },
+    {
+      id: 'GEN-03', cropId: 'general', crop: '通用', cat: '栽培',
+      title: '测土配方施肥', level: '通用',
+      aliases: ['施肥', '配方肥', '缺素', '土壤'],
+      keywords: ['氮磷钾', '底肥', '追肥', '有机肥', '酸碱'],
+      season: '播种前、追肥期',
+      short: '先测土、再配方：缺什么补什么，比“多施肥”更省钱也更增产。',
+      symptoms: '（这是一条施肥原则。）',
+      cause: '长期偏施氮肥、忽视有机肥和微量元素，会造成土壤板结、肥料利用率低。',
+      control: [
+        '播种前取土检测，按结果确定氮磷钾比例。',
+        '增施腐熟有机肥，改善土壤结构。',
+        '分期施肥：底肥、追肥、叶面喷施结合，避免一次过量。'
+      ],
+      tip: '有机肥一定要充分腐熟，生粪下地容易烧根、招地下害虫。'
+    }
+  ];
+
+  var FACTS = [
+    {
+      em: '🌾', title: '麦芒是叶子变的',
+      text: '小麦的麦芒不是“刺”，而是叶片退化来的，能光合、能减少水分蒸发，还能挡一挡害虫。'
+    },
+    {
+      em: '🧄', title: '大蒜要“先拍后放”',
+      text: '大蒜素不是天生就在蒜里，要等蒜细胞被破坏后，酶作用 10 分钟左右才大量生成。'
+    },
+    {
+      em: '🍅', title: '番茄靠“震动”授粉',
+      text: '番茄花是自花授粉，但需要震动让花粉落下。棚里放熊蜂，或轻轻振动花序，坐果更整齐。'
+    }
+  ];
+
+  g.NZ = g.NZ || {};
+  g.NZ.CROPS = CROPS;
+  g.NZ.KB = KB;
+  g.NZ.FACTS = FACTS;
+  g.NZ.KB_VERSION = '1.0';
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* ===========================================================
+   农知精灵 · 小绿的“生病事件”
+   每个事件：一张病虫害示意图 + 症状描述 + 3 个治疗方案
+   对错都给出解释，答完附一句要点。
+   =========================================================== */
+(function (g) {
+  'use strict';
+
+  var QUIZ = [
+    {
+      id: 'Q-WHEAT-1', cropId: 'wheat', entryId: 'WHEAT-01',
+      name: '小麦条锈病', base: 'leaf', art: 'rust',
+      symptom: '叶片上冒出鲜黄色、沿叶脉排成一条条的粉斑，手指一摸就沾上黄粉。',
+      question: '小绿的麦叶成了这样，你会怎么治？',
+      options: [
+        { t: '马上用戊唑醇等三唑类药剂喷雾，7—10 天后复查补喷', ok: true, why: '对。条锈病要“见病就打”，把菌源压下去；重发田块 7—10 天补喷一次。' },
+        { t: '等整片叶子枯黄了再打药', ok: false, why: '太晚了。条锈病扩散极快，等叶片枯死，孢子已经飞满全田。' },
+        { t: '用除草剂加杀虫剂一起喷', ok: false, why: '方向错了。这是真菌病害，除草剂和杀虫剂都治不了它。' }
+      ],
+      learn: '条锈病：见病就打，三唑类，7—10 天复查。'
+    },
+    {
+      id: 'Q-WHEAT-2', cropId: 'wheat', entryId: 'WHEAT-02',
+      name: '小麦赤霉病', base: 'ear', art: 'mold',
+      symptom: '麦穗上有几个小穗提前枯白，穗基部还能看到粉红色霉层。',
+      question: '扬花期刚过就下连阴雨，小绿的麦穗这样了，怎么办？',
+      options: [
+        { t: '扬花期遇连阴雨，雨隙抢喷氰烯菌酯，5—7 天后再补一次', ok: true, why: '对。赤霉病只有扬花期这一个关键窗口，见花打药、雨前抢喷。' },
+        { t: '等麦穗全白了再喷一次', ok: false, why: '白穗说明已经侵染完成，再喷救不回来，只能防下一批。' },
+        { t: '只喷叶子，不用管麦穗', ok: false, why: '病菌是从花器侵进去的，药要打到穗上才有用。' }
+      ],
+      learn: '赤霉病：见花打药，雨前抢喷，5—7 天补一次。'
+    },
+    {
+      id: 'Q-CORN-1', cropId: 'corn', entryId: 'CORN-01',
+      name: '玉米草地贪夜蛾', base: 'leaf', art: 'armyworm',
+      symptom: '心叶被啃出成排的半透明小孔，拨开心叶，里面卷着一条头部有倒“Y”纹的虫子。',
+      question: '小绿的玉米心叶被啃了，怎么处理？',
+      options: [
+        { t: '低龄幼虫期用氯虫苯甲酰胺，药液重点喷进心叶', ok: true, why: '对。治早治小，而且必须把药送进心叶，虫子就藏在那儿。' },
+        { t: '只喷叶面，心叶不用管', ok: false, why: '虫子在心叶里，叶面上的药碰不到它。' },
+        { t: '用杀菌剂喷一遍', ok: false, why: '这是虫害，杀菌剂无效。' }
+      ],
+      learn: '草地贪夜蛾：治早治小，药进心叶。'
+    },
+    {
+      id: 'Q-CORN-2', cropId: 'corn', entryId: 'CORN-02',
+      name: '玉米大斑病', base: 'leaf', art: 'longspot',
+      symptom: '叶片上出现长梭形黄褐色病斑，边缘不清晰，几个病斑连成了一大片。',
+      question: '小绿的玉米叶子长斑了，哪种做法靠谱？',
+      options: [
+        { t: '发病初期用吡唑醚菌酯叶面喷雾，同时换抗病品种、合理密植', ok: true, why: '对。药剂控制当下，品种和密度决定来年。' },
+        { t: '把整块玉米全部拔掉', ok: false, why: '代价太大。大斑病可防可治，没必要毁田。' },
+        { t: '多浇水，让植株长快点', ok: false, why: '田间湿度越大，大斑病越重，浇水反而帮倒忙。' }
+      ],
+      learn: '大斑病：防在初发，治在叶面，根子在品种和密度。'
+    },
+    {
+      id: 'Q-PEANUT-1', cropId: 'peanut', entryId: 'PEANUT-02',
+      name: '花生白绢病', base: 'stem', art: 'whiteMold',
+      symptom: '花生茎基部变褐腐烂，表面长出一层白色绢丝状菌丝，植株突然就蔫了。',
+      question: '小绿的花生突然萎蔫，根茎处还有白丝，怎么办？',
+      options: [
+        { t: '拔除病株带出田外，病穴撒生石灰，周围用噻呋酰胺灌根', ok: true, why: '对。白绢病靠菌核在土里传播，拔株、消毒、灌根能拦住扩散。' },
+        { t: '多施氮肥，让花生重新长起来', ok: false, why: '氮肥会让植株更密更湿，反而利于病害蔓延。' },
+        { t: '中午大水漫灌，把病菌冲走', ok: false, why: '白绢病最喜欢高湿，漫灌等于给它铺路。' }
+      ],
+      learn: '白绢病：轮作是根，拔株消毒是急，灌根是补。'
+    },
+    {
+      id: 'Q-GARLIC-1', cropId: 'garlic', entryId: 'GARLIC-01',
+      name: '大蒜蒜蛆', base: 'bulb', art: 'maggot',
+      symptom: '蒜叶发黄萎蔫，拔起一株，蒜瓣基部已经被蛀空、发臭，里面还有白色小蛆。',
+      question: '小绿的蒜被蛆蛀了，怎么治？',
+      options: [
+        { t: '幼虫初孵期用噻虫嗪灌根，同时改施腐熟有机肥', ok: true, why: '对。灌根要赶在幼虫钻入蒜瓣前，生粪是成虫的诱饵。' },
+        { t: '在叶面撒一层石灰', ok: false, why: '蒜蛆在土里、在蒜瓣里，叶面撒石灰没用。' },
+        { t: '把蒜挖出来晒两天再种回去', ok: false, why: '折腾一趟，虫没死，苗先死了。' }
+      ],
+      learn: '蒜蛆：腐熟粪肥 + 初孵灌根，错过窗口就难救。'
+    },
+    {
+      id: 'Q-APPLE-1', cropId: 'apple', entryId: 'APPLE-01',
+      name: '苹果腐烂病', base: 'branch', art: 'canker',
+      symptom: '枝干树皮上出现红褐色、略凹陷的病斑，凑近闻有酒糟味，病皮一撕就掉。',
+      question: '小绿的苹果树枝干烂了一块，怎么处理？',
+      options: [
+        { t: '刮除病斑到健康部位、边缘超出 1 厘米，刮后涂甲基硫菌灵', ok: true, why: '对。刮治要刮干净、刮到健皮，再涂药保护伤口。' },
+        { t: '只把病斑周围的叶子剪掉', ok: false, why: '病在树皮里，剪叶子不解决问题。' },
+        { t: '多浇水，让树自己长好', ok: false, why: '腐烂病是“弱树病”，光浇水不解决树势和伤口问题。' }
+      ],
+      learn: '腐烂病：刮早刮净、涂药护伤、壮树防冻。'
+    },
+    {
+      id: 'Q-VEG-1', cropId: 'veg', entryId: 'VEG-01',
+      name: '番茄灰霉病', base: 'fruit', art: 'grayMold',
+      symptom: '番茄幼果表面长出一层灰白色绒毛状霉层，花瓣先烂，果柄发黑。',
+      question: '棚里的小绿番茄烂果了，怎么处理？',
+      options: [
+        { t: '晴天中午通风排湿，摘除病果残花，用啶酰菌胺重点喷花和幼果', ok: true, why: '对。灰霉病是“湿”出来的，控湿、清病残、喷花器三件事一起做。' },
+        { t: '加大浇水量，把棚温降下来', ok: false, why: '越浇越湿，灰霉越重。' },
+        { t: '只喷叶片正面', ok: false, why: '病菌从残花侵入，花器和幼果才是重点。' }
+      ],
+      learn: '灰霉病：控湿第一，摘残花，喷花器。'
+    },
+    {
+      id: 'Q-VEG-2', cropId: 'veg', entryId: 'VEG-02',
+      name: '黄瓜霜霉病', base: 'leaf', art: 'angular',
+      symptom: '黄瓜叶正面出现受叶脉限制的多角形黄褐斑，翻过来叶背有一层灰黑色霉。',
+      question: '小绿的黄瓜叶长斑了，药该往哪儿打？',
+      options: [
+        { t: '控温控湿，用烯酰吗啉重点喷叶背', ok: true, why: '对。霜霉病的霉层在叶背，药打叶面等于白打。' },
+        { t: '只喷叶正面，省药', ok: false, why: '病菌在叶背，喷正面防效很差。' },
+        { t: '多施氮肥，让叶片长厚一点', ok: false, why: '氮肥偏多会让叶片嫩、棚内更郁闭，反而易发。' }
+      ],
+      learn: '霜霉病：降湿 + 叶背用药。'
+    },
+    {
+      id: 'Q-VEG-3', cropId: 'veg', entryId: 'VEG-03',
+      name: '番茄 TY 病毒', base: 'leaf', art: 'virus',
+      symptom: '番茄顶部新叶黄化、卷曲、变小，叶背还有许多白色小飞虫，一碰就飞。',
+      question: '小绿的番茄新叶卷了，还飞小白虫，怎么办？',
+      options: [
+        { t: '通风口加防虫网、挂黄板，用噻虫嗪治粉虱，拔除病株', ok: true, why: '对。TY 病毒无药可治，只能防住传毒的粉虱。' },
+        { t: '喷抗病毒药剂，把病毒杀死', ok: false, why: '目前没有能“杀死”植物体内病毒的特效药，只能防虫、防病株。' },
+        { t: '多施氮肥，让新叶长出来盖住症状', ok: false, why: '新叶越长越嫩，粉虱越喜欢。' }
+      ],
+      learn: 'TY 病毒：防虫就是防病，病株早拔。'
+    },
+    {
+      id: 'Q-GINGER-1', cropId: 'ginger', entryId: 'GINGER-01',
+      name: '生姜姜瘟病', base: 'stem', art: 'bacterial',
+      symptom: '姜株叶片自下而上黄化卷曲，茎基部发软，挤一下有白色菌脓，还有臭味。',
+      question: '小绿的姜蔫了，根茎发软有臭味，怎么处理？',
+      options: [
+        { t: '立即拔除病株，病穴撒生石灰，周围用噻菌铜灌根，并实行轮作', ok: true, why: '对。姜瘟是细菌性病害，要切断水源传播、压低菌量。' },
+        { t: '用三唑酮等杀真菌剂灌根', ok: false, why: '方向错了，姜瘟是细菌，杀真菌剂基本无效。' },
+        { t: '把病株踩进土里当肥料', ok: false, why: '等于把菌源埋回姜田，下一场雨就扩散。' }
+      ],
+      learn: '姜瘟：细菌病，拔株消毒 + 铜制剂 + 轮作。'
+    },
+    {
+      id: 'Q-SWEET-1', cropId: 'sweet', entryId: 'SWEET-01',
+      name: '甘薯黑斑病', base: 'tuber', art: 'blackRot',
+      symptom: '薯块上有黑褐色凹陷病斑，闻起来发苦，堆在窖里还在不断烂开。',
+      question: '小绿的红薯烂窖了，明年怎么防？',
+      options: [
+        { t: '换脱毒种薯，种薯上床前药剂浸种，贮藏控温 10—15℃ 并通风', ok: true, why: '对。黑斑病是“种薯带病 + 高温高湿”，两头都要管。' },
+        { t: '用病薯做种，反正还能发芽', ok: false, why: '病薯就是最大的菌源，会把病带进苗床。' },
+        { t: '贮藏窖里多喷水保湿', ok: false, why: '湿度越高烂得越快。' }
+      ],
+      learn: '黑斑病：无病种薯 + 浸种 + 低温通风贮藏。'
+    },
+    {
+      id: 'Q-COTTON-1', cropId: 'cotton', entryId: 'COTTON-01',
+      name: '棉花棉铃虫', base: 'boll', art: 'borer',
+      symptom: '棉花花蕾上有蛀孔，孔口堆着虫粪，嫩叶被啃出缺刻，蕾铃掉了一地。',
+      question: '小绿的棉花蕾铃被蛀了，怎么治？',
+      options: [
+        { t: '性诱剂诱杀成虫，卵孵化盛期用氯虫苯甲酰胺', ok: true, why: '对。棉铃虫要“压成虫、打初孵”，等钻蛀进蕾铃就难治。' },
+        { t: '等蕾铃掉光了再打药', ok: false, why: '那时产量已经损失，防治要赶在蛀入前。' },
+        { t: '只打一次药，一季不管', ok: false, why: '棉铃虫世代重叠，需按测报多次防治并轮换用药。' }
+      ],
+      learn: '棉铃虫：诱成虫、打初孵、勤查报。'
+    }
+  ];
+
+  g.NZ = g.NZ || {};
+  g.NZ.QUIZ = QUIZ;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* ===========================================================
+   农知精灵 · 插画库（纯手绘 SVG，无外部图片依赖）
+   - assistant(expr)  卡通农技员“小穗”
+   - plant(state)     植物萌宠“小绿”
+   - specimen(opts)   病虫害示意图（叶片 / 麦穗 / 蒜头 / 枝干 / 果实）
+   =========================================================== */
+(function (g) {
+  'use strict';
+  var uid = 0;
+  function nextId(p) { uid += 1; return p + uid; }
+
+  /* ---------------- 角色：小穗 ---------------- */
+  function assistant(expr) {
+    expr = expr || 'idle';
+    var eyes = '', brows = '', mouth = '', extras = '', blush = '';
+
+    if (expr === 'happy') {
+      eyes = '<path d="M77 101 q7 -10 14 0" stroke="#3a2e24" stroke-width="3.4" fill="none" stroke-linecap="round"/>' +
+             '<path d="M109 101 q7 -10 14 0" stroke="#3a2e24" stroke-width="3.4" fill="none" stroke-linecap="round"/>';
+      mouth = '<path d="M88 117 q12 14 24 0" stroke="#b3715a" stroke-width="3.6" fill="none" stroke-linecap="round"/>';
+      blush = '<ellipse cx="70" cy="112" rx="10" ry="6" fill="#f6a894" opacity=".55"/><ellipse cx="130" cy="112" rx="10" ry="6" fill="#f6a894" opacity=".55"/>';
+      extras = '<g fill="#f2c14e" opacity=".9">' +
+        '<path d="M158 62 l2.6 6.6 6.6 2.6 -6.6 2.6 -2.6 6.6 -2.6 -6.6 -6.6 -2.6 6.6 -2.6z"/>' +
+        '<path d="M46 84 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2z"/>' +
+        '</g>';
+    } else if (expr === 'thinking') {
+      eyes = '<ellipse cx="86" cy="96" rx="5.6" ry="7.4" fill="#3a2e24"/><ellipse cx="118" cy="96" rx="5.6" ry="7.4" fill="#3a2e24"/>' +
+             '<circle cx="88" cy="93.5" r="2" fill="#fff"/><circle cx="120" cy="93.5" r="2" fill="#fff"/>';
+      brows = '<path d="M76 84 q9 -4 17 -1" stroke="#c99a6f" stroke-width="3" fill="none" stroke-linecap="round"/>';
+      mouth = '<circle cx="101" cy="122" r="4.2" fill="#b3715a"/>';
+      blush = '<ellipse cx="70" cy="112" rx="8" ry="5" fill="#f6a894" opacity=".35"/>';
+      extras = '<g fill="#9fb0c9" opacity=".85"><circle cx="152" cy="58" r="3"/><circle cx="160" cy="48" r="4"/><circle cx="170" cy="36" r="5.2"/></g>';
+    } else if (expr === 'worried') {
+      eyes = '<ellipse cx="84" cy="102" rx="6" ry="6.6" fill="#3a2e24"/><ellipse cx="116" cy="102" rx="6" ry="6.6" fill="#3a2e24"/>' +
+             '<circle cx="86" cy="100" r="1.9" fill="#fff"/><circle cx="118" cy="100" r="1.9" fill="#fff"/>';
+      brows = '<path d="M74 88 q10 6 18 2" stroke="#b58a64" stroke-width="3.2" fill="none" stroke-linecap="round"/>' +
+              '<path d="M126 88 q-10 6 -18 2" stroke="#b58a64" stroke-width="3.2" fill="none" stroke-linecap="round"/>';
+      mouth = '<path d="M90 124 q11 -7 22 0" stroke="#b3715a" stroke-width="3.4" fill="none" stroke-linecap="round"/>';
+      extras = '<path d="M150 78 c4 7 6 10 6 13 a6 6 0 0 1 -12 0 c0 -3 2 -6 6 -13z" fill="#8fc3e8" opacity=".9"/>';
+    } else {
+      eyes = '<ellipse cx="84" cy="100" rx="6.6" ry="8.6" fill="#3a2e24"/><ellipse cx="116" cy="100" rx="6.6" ry="8.6" fill="#3a2e24"/>' +
+             '<circle cx="86.4" cy="97" r="2.3" fill="#fff"/><circle cx="118.4" cy="97" r="2.3" fill="#fff"/>';
+      mouth = '<path d="M92 118 q8 8 16 0" stroke="#b3715a" stroke-width="3.4" fill="none" stroke-linecap="round"/>';
+      blush = '<ellipse cx="70" cy="112" rx="9" ry="5.4" fill="#f6a894" opacity=".42"/><ellipse cx="130" cy="112" rx="9" ry="5.4" fill="#f6a894" opacity=".42"/>';
+    }
+
+    var skin = nextId('skin');
+    return '<svg viewBox="0 0 200 214" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="农技员小穗">' +
+      '<defs><radialGradient id="' + skin + '" cx="42%" cy="34%" r="72%">' +
+      '<stop offset="0" stop-color="#fff5e8"/><stop offset="1" stop-color="#ffe0c1"/></radialGradient></defs>' +
+      '<ellipse cx="100" cy="203" rx="47" ry="7" fill="#2b2820" opacity=".1"/>' +
+      /* 麦穗“天线” */
+      '<g stroke="#c39a44" stroke-width="3" stroke-linecap="round" fill="none">' +
+      '<path d="M76 54 C68 38 63 28 60 18"/><path d="M124 54 C132 38 137 28 140 18"/></g>' +
+      '<g fill="#e6c069">' +
+      '<ellipse cx="73" cy="44" rx="4" ry="7" transform="rotate(-28 73 44)"/>' +
+      '<ellipse cx="69" cy="34" rx="4" ry="7" transform="rotate(-24 69 34)"/>' +
+      '<ellipse cx="65" cy="24" rx="3.6" ry="6.4" transform="rotate(-20 65 24)"/>' +
+      '<ellipse cx="127" cy="44" rx="4" ry="7" transform="rotate(28 127 44)"/>' +
+      '<ellipse cx="131" cy="34" rx="4" ry="7" transform="rotate(24 131 34)"/>' +
+      '<ellipse cx="135" cy="24" rx="3.6" ry="6.4" transform="rotate(20 135 24)"/></g>' +
+      /* 身体 */
+      '<path d="M62 200 v-28 c0-21 17-33 38-33 s38 12 38 33 v28 z" fill="#4a9a63"/>' +
+      '<path d="M84 141 h32 v10 a16 16 0 0 1 -32 0 z" fill="#eef5e7" opacity=".65"/>' +
+      '<path d="M100 152 v22" stroke="#3f8757" stroke-width="2" opacity=".5"/>' +
+      /* 手臂 */
+      '<path d="M64 158 c-14 4 -20 16 -13 25" stroke="#4a9a63" stroke-width="12" stroke-linecap="round" fill="none"/>' +
+      '<path d="M136 158 c14 3 21 -7 20 -20" stroke="#4a9a63" stroke-width="12" stroke-linecap="round" fill="none"/>' +
+      '<circle cx="52" cy="185" r="8.5" fill="#ffe0c4"/><circle cx="157" cy="136" r="8.5" fill="#ffe0c4"/>' +
+      /* 头 */
+      '<circle cx="100" cy="96" r="53" fill="url(#' + skin + ')"/>' +
+      /* 草帽 */
+      '<ellipse cx="100" cy="58" rx="59" ry="13" fill="#e9b94f"/>' +
+      '<path d="M70 58 C70 18 130 18 130 58 Z" fill="#f7d47a"/>' +
+      '<path d="M73 50 h54 v9 h-54 z" fill="#3f8f5f"/>' +
+      '<path d="M80 44 q6 -10 14 -13" stroke="#fff" stroke-width="3" opacity=".45" fill="none" stroke-linecap="round"/>' +
+      /* 表情 */
+      eyes + brows + mouth + blush + extras +
+      '</svg>';
+  }
+
+  function assistantHead(expr) {
+    var full = assistant(expr);
+    return full.replace('viewBox="0 0 200 214"', 'viewBox="30 24 140 140"');
+  }
+
+  /* ---------------- 植物萌宠：小绿 ---------------- */
+  function plant(opts) {
+    opts = opts || {};
+    var stage = Math.max(0, Math.min(4, opts.stage || 0));
+    var sick = !!opts.sick;
+    var mood = opts.mood || 'ok';
+    var R = [25, 32, 44, 46, 48][stage];
+    var cy = [163, 153, 139, 135, 133][stage];
+    var gradId = nextId('leafg');
+    var headTop = sick ? '#c9d47e' : '#a6dfa4';
+    var headBot = sick ? '#a9b862' : '#6ec07f';
+    var outline = sick ? '#8d9650' : '#3f8757';
+    var s = '<svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="植物小绿">' +
+      '<defs><radialGradient id="' + gradId + '" cx="36%" cy="28%" r="78%">' +
+      '<stop offset="0" stop-color="' + headTop + '"/><stop offset="1" stop-color="' + headBot + '"/></radialGradient></defs>' +
+      '<ellipse cx="100" cy="234" rx="52" ry="7" fill="#2b2820" opacity=".12"/>';
+
+    /* 花盆 */
+    s += '<g>' +
+      '<path d="M58 200 h84 l-9 34 a6 6 0 0 1 -6 5 h-54 a6 6 0 0 1 -6 -5 z" fill="#c26c46"/>' +
+      '<path d="M58 200 h84 l-2 8 h-80 z" fill="#a95a39" opacity=".55"/>' +
+      '<rect x="52" y="188" width="96" height="17" rx="8" fill="#d07a52"/>' +
+      '<rect x="52" y="188" width="96" height="6" rx="3" fill="#e58f63" opacity=".8"/>' +
+      '<ellipse cx="100" cy="189" rx="41" ry="6" fill="#6b4a34"/>' +
+      '<ellipse cx="100" cy="188" rx="41" ry="5" fill="#7d5940"/>' +
+      '<g fill="#8f6a4d"><circle cx="88" cy="188" r="1.6"/><circle cx="106" cy="190" r="1.3"/><circle cx="116" cy="187" r="1.2"/></g>' +
+      '</g>';
+
+    /* 茎 */
+    if (stage > 0) {
+      s += '<path d="M100 188 C100 172 97 160 100 ' + (cy + R - 8) + '" stroke="' + outline + '" stroke-width="9" stroke-linecap="round" fill="none"/>';
+    }
+
+    /* 底部叶片 */
+    if (stage >= 1) {
+      var droop = sick ? ' rotate(16 100 176)' : '';
+      s += '<g transform="' + droop + '">' +
+        '<path d="M96 176 C74 174 60 164 56 148 C76 146 92 156 96 176 Z" fill="#4f9f68"/>' +
+        '<path d="M104 172 C126 170 140 160 144 144 C124 142 108 152 104 172 Z" fill="#5cb076"/>' +
+        '</g>';
+    }
+
+    /* 头部 */
+    s += '<g transform="translate(100 ' + cy + ')"><g class="' + (mood === 'happy' ? 'float' : 'sway') + '">';
+    /* 顶部小叶 */
+    s += '<path d="M0 ' + (-R) + ' C-16 ' + (-R - 20) + ' -6 ' + (-R - 38) + ' 12 ' + (-R - 44) +
+         ' C18 ' + (-R - 24) + ' 12 ' + (-R - 8) + ' 0 ' + (-R) + ' Z" fill="' + (sick ? '#9aa457' : '#4c9a63') + '"/>';
+    s += '<path d="M2 ' + (-R + 2) + ' C16 ' + (-R - 12) + ' 32 ' + (-R - 6) + ' 36 ' + (-R + 6) +
+         ' C22 ' + (-R + 14) + ' 8 ' + (-R + 10) + ' 2 ' + (-R + 2) + ' Z" fill="' + (sick ? '#aab462' : '#5cb076') + '"/>';
+    /* 圆头 */
+    s += '<circle r="' + R + '" fill="url(#' + gradId + ')"/>';
+    s += '<circle r="' + R + '" fill="none" stroke="' + outline + '" stroke-width="2" opacity=".35"/>';
+
+    /* 病斑 */
+    if (sick) {
+      s += '<g fill="#9c6132" opacity=".85">' +
+        '<ellipse cx="' + (-R * 0.52) + '" cy="' + (-R * 0.2) + '" rx="7" ry="5" transform="rotate(-18 ' + (-R * 0.52) + ' ' + (-R * 0.2) + ')"/>' +
+        '<ellipse cx="' + (R * 0.46) + '" cy="' + (R * 0.16) + '" rx="6" ry="4.4"/>' +
+        '<ellipse cx="' + (-R * 0.1) + '" cy="' + (R * 0.52) + '" rx="5" ry="4"/>' +
+        '<circle cx="' + (R * 0.2) + '" cy="' + (-R * 0.55) + '" r="3.4"/>' +
+        '</g>';
+      s += '<path d="M' + (-R * 0.55) + ' ' + (-R * 0.6) + ' q' + R * 0.2 + ' ' + (-R * 0.16) + ' ' + R * 0.42 + ' ' + (-R * 0.06) + '" stroke="#7f8a45" stroke-width="2" opacity=".5" fill="none"/>';
+    }
+
+    /* 脸 */
+    var ex = R * 0.28, ey = -R * 0.06;
+    if (mood === 'happy') {
+      s += '<path d="M' + (-ex - 5) + ' ' + ey + ' q5 -7 10 0" stroke="#2f4a33" stroke-width="2.6" fill="none" stroke-linecap="round"/>' +
+           '<path d="M' + (ex - 5) + ' ' + ey + ' q5 -7 10 0" stroke="#2f4a33" stroke-width="2.6" fill="none" stroke-linecap="round"/>';
+    } else {
+      s += '<ellipse cx="' + (-ex) + '" cy="' + ey + '" rx="3.1" ry="4.1" fill="#2f4a33"/>' +
+           '<ellipse cx="' + ex + '" cy="' + ey + '" rx="3.1" ry="4.1" fill="#2f4a33"/>' +
+           '<circle cx="' + (-ex + 1) + '" cy="' + (ey - 1.2) + '" r="1.1" fill="#fff"/>' +
+           '<circle cx="' + (ex + 1) + '" cy="' + (ey - 1.2) + '" r="1.1" fill="#fff"/>';
+    }
+    if (mood === 'sick') {
+      s += '<path d="M-6 ' + (ey + 14) + ' q6 -5 12 0" stroke="#4a5a35" stroke-width="2.4" fill="none" stroke-linecap="round"/>';
+    } else if (mood === 'happy') {
+      s += '<path d="M-7 ' + (ey + 11) + ' q7 9 14 0" stroke="#3f5a41" stroke-width="2.6" fill="none" stroke-linecap="round"/>';
+    } else {
+      s += '<path d="M-5 ' + (ey + 12) + ' q5 5 10 0" stroke="#3f5a41" stroke-width="2.4" fill="none" stroke-linecap="round"/>';
+    }
+    s += '<ellipse cx="' + (-ex - 4) + '" cy="' + (ey + 9) + '" rx="4" ry="2.6" fill="#e88b7a" opacity=".5"/>' +
+         '<ellipse cx="' + (ex + 4) + '" cy="' + (ey + 9) + '" rx="4" ry="2.6" fill="#e88b7a" opacity=".5"/>';
+
+    /* 开花 / 结果 */
+    if (stage === 3) {
+      s += '<g transform="translate(0 ' + (-R - 4) + ')">' +
+        '<circle cx="0" cy="-8" r="5" fill="#fff7e0" stroke="#e8cfa0" stroke-width="1"/>' +
+        '<circle cx="-8" cy="-2" r="5" fill="#fff7e0" stroke="#e8cfa0" stroke-width="1"/>' +
+        '<circle cx="8" cy="-2" r="5" fill="#fff7e0" stroke="#e8cfa0" stroke-width="1"/>' +
+        '<circle cx="-5" cy="-13" r="4.4" fill="#fff7e0" stroke="#e8cfa0" stroke-width="1"/>' +
+        '<circle cx="5" cy="-13" r="4.4" fill="#fff7e0" stroke="#e8cfa0" stroke-width="1"/>' +
+        '<circle cx="0" cy="-7" r="3" fill="#f2c14e"/></g>';
+    }
+    s += '</g></g>';
+
+    if (stage === 4) {
+      var fx = 100 + R - 6, fy = cy + 24;
+      s += '<path d="M100 ' + (cy + 10) + ' q' + (R - 2) + ' 4 ' + (R - 4) + ' 16" stroke="#3f8757" stroke-width="3" fill="none"/>' +
+        '<circle cx="' + fx + '" cy="' + fy + '" r="14" fill="#df5f45"/>' +
+        '<circle cx="' + (fx - 4) + '" cy="' + (fy - 4) + '" r="4" fill="#f2856c" opacity=".8"/>' +
+        '<path d="M' + (fx - 8) + ' ' + (fy - 12) + ' l3 4 3 -5 3 5 3 -4 -2 7 h-8 z" fill="#4c9a63"/>';
+    }
+
+    if (mood === 'happy') {
+      s += '<g fill="#f2c14e" opacity=".85">' +
+        '<circle cx="52" cy="112" r="2.6"/><circle cx="150" cy="120" r="2"/><circle cx="44" cy="146" r="1.8"/>' +
+        '</g>';
+    }
+    if (mood === 'sick') {
+      s += '<path d="M150 ' + (cy - 18) + ' c3 5 5 8 5 10 a5 5 0 0 1 -10 0 c0 -2 2 -5 5 -10z" fill="#8fc3e8" opacity=".85"/>';
+    }
+
+    return s + '</svg>';
+  }
+
+  /* ---------------- 病虫害标本图 ---------------- */
+  function specimen(opts) {
+    opts = opts || {};
+    var base = opts.base || 'leaf';
+    var kind = opts.art || 'spot';
+    var clip = nextId('clip');
+    var leafPath = 'M34 122 Q110 26 222 62 Q120 160 34 122 Z';
+
+    var shapes = {
+      leaf: '<path d="' + leafPath + '" fill="#8fc98a" stroke="#5c9b5f" stroke-width="2.4"/>' +
+        '<path d="M37 121 Q128 88 219 64" stroke="#5c9b5f" stroke-width="2.2" fill="none" opacity=".8"/>' +
+        '<g stroke="#6fae72" stroke-width="1.5" fill="none" opacity=".75">' +
+        '<path d="M64 112 Q84 88 110 74"/><path d="M90 103 Q112 80 144 68"/><path d="M118 95 Q142 76 176 68"/><path d="M148 87 Q172 72 200 66"/>' +
+        '<path d="M70 118 Q88 134 112 140"/><path d="M98 110 Q120 130 150 138"/><path d="M128 102 Q152 124 184 132"/>' +
+        '</g>',
+      ear: '<path d="M132 168 L132 96" stroke="#b99a52" stroke-width="6" stroke-linecap="round"/>' +
+        '<g fill="#dcb75f" stroke="#bf9a45" stroke-width="1.2">' +
+        '<ellipse cx="118" cy="104" rx="8" ry="13" transform="rotate(-22 118 104)"/><ellipse cx="146" cy="104" rx="8" ry="13" transform="rotate(22 146 104)"/>' +
+        '<ellipse cx="117" cy="86" rx="8" ry="13" transform="rotate(-20 117 86)"/><ellipse cx="147" cy="86" rx="8" ry="13" transform="rotate(20 147 86)"/>' +
+        '<ellipse cx="120" cy="68" rx="7.4" ry="12" transform="rotate(-16 120 68)"/><ellipse cx="144" cy="68" rx="7.4" ry="12" transform="rotate(16 144 68)"/>' +
+        '<ellipse cx="124" cy="52" rx="6.6" ry="10" transform="rotate(-12 124 52)"/><ellipse cx="140" cy="52" rx="6.6" ry="10" transform="rotate(12 140 52)"/>' +
+        '</g>' +
+        '<g stroke="#d8b66a" stroke-width="1.5" opacity=".9">' +
+        '<path d="M114 96 L108 46"/><path d="M150 96 L158 48"/><path d="M120 58 L114 18"/><path d="M144 58 L152 20"/>' +
+        '</g>',
+      bulb: '<path d="M130 152 C94 152 80 126 92 102 C104 80 118 70 130 56 C142 70 156 80 168 102 C180 126 166 152 130 152 Z" fill="#f5eee5" stroke="#c9b6a2" stroke-width="2.2"/>' +
+        '<g stroke="#dccdba" stroke-width="1.5" fill="none" opacity=".95">' +
+        '<path d="M130 150 C124 124 126 96 130 72"/><path d="M130 150 C110 130 104 106 106 86"/><path d="M130 150 C150 130 156 106 154 86"/>' +
+        '</g>' +
+        '<path d="M124 100 q6 -12 12 0" stroke="#c2ae98" stroke-width="2.6" fill="none"/>' +
+        '<path d="M130 62 q-4 -18 6 -26" stroke="#a8b47a" stroke-width="4" fill="none" stroke-linecap="round"/>',
+      tuber: '<path d="M52 112 C76 80 116 68 156 72 C196 76 216 94 210 112 C204 132 170 144 128 142 C90 140 66 132 52 112 Z" fill="#c98a5e"/>' +
+        '<path d="M68 104 C92 88 132 82 170 86" stroke="#dda077" stroke-width="7" fill="none" opacity=".55" stroke-linecap="round"/>' +
+        '<g stroke="#a96f49" stroke-width="1.4" opacity=".55" fill="none">' +
+        '<path d="M86 96 q10 -4 20 -2"/><path d="M120 84 q12 -2 22 1"/><path d="M160 90 q10 2 18 6"/><path d="M96 126 q14 6 30 6"/></g>' +
+        '<g fill="#b5734a" opacity=".5"><circle cx="78" cy="118" r="2"/><circle cx="186" cy="104" r="2.2"/><circle cx="140" cy="130" r="1.8"/></g>',
+      stem: '<ellipse cx="130" cy="162" rx="80" ry="13" fill="#e4d3b3"/>' +
+        '<path d="M108 158 C104 128 100 106 92 86" stroke="#7fae5f" stroke-width="11" stroke-linecap="round" fill="none"/>' +
+        '<path d="M152 158 C156 130 162 110 172 92" stroke="#8fbe6c" stroke-width="10" stroke-linecap="round" fill="none"/>' +
+        '<path d="M97 112 C75 108 64 94 63 76 C84 78 95 92 97 112 Z" fill="#5ea86f"/>' +
+        '<path d="M167 116 C188 112 198 98 199 80 C179 82 168 96 167 116 Z" fill="#6cb87c"/>' +
+        '<path d="M104 132 C88 132 78 122 76 108 C92 108 102 118 104 132 Z" fill="#549b66"/>' +
+        '<g fill="#e8dcc2"><circle cx="70" cy="158" r="2.4"/><circle cx="186" cy="156" r="2"/><circle cx="130" cy="164" r="2.2"/></g>',
+      branch: '<path d="M14 152 C80 142 150 116 246 84" stroke="#8a6a4c" stroke-width="30" stroke-linecap="round"/>' +
+        '<path d="M20 146 C84 136 152 110 244 80" stroke="#a17d5b" stroke-width="9" stroke-linecap="round" opacity=".55"/>' +
+        '<path d="M70 128 C50 120 44 104 48 88 C66 92 76 108 70 128 Z" fill="#6aa86d"/>' +
+        '<path d="M74 126 C58 126 46 118 40 106 C56 104 68 112 74 126 Z" fill="#4f9a63"/>' +
+        '<path d="M188 102 C172 88 170 72 176 58 C192 66 198 84 188 102 Z" fill="#79b87c"/>' +
+        '<g stroke="#6f5339" stroke-width="1.4" opacity=".5" fill="none">' +
+        '<path d="M40 158 q10 -6 22 -7"/><path d="M86 142 q12 -6 24 -8"/><path d="M136 130 q10 -6 20 -8"/>' +
+        '<path d="M196 108 q10 -4 18 -6"/></g>',
+      fruit: '<ellipse cx="130" cy="100" rx="54" ry="52" fill="#e2604a"/>' +
+        '<path d="M98 76 q-14 20 -4 40" stroke="#f1927b" stroke-width="9" fill="none" opacity=".5" stroke-linecap="round"/>' +
+        '<g fill="#4c9a63">' +
+        '<path d="M130 52 C118 50 106 42 102 30 C116 32 128 40 130 52 Z"/>' +
+        '<path d="M130 52 C142 50 154 42 158 30 C144 32 132 40 130 52 Z"/>' +
+        '<path d="M130 52 C126 38 126 26 132 18 C136 30 134 42 130 52 Z"/>' +
+        '<path d="M130 52 C136 40 144 32 152 28 C148 40 138 50 130 52 Z"/>' +
+        '<path d="M130 52 C124 40 116 32 108 28 C112 40 122 50 130 52 Z"/>' +
+        '</g>' +
+        '<path d="M130 50 L130 34" stroke="#3f8757" stroke-width="4" stroke-linecap="round"/>',
+      boll: '<path d="M130 44 C170 44 186 72 182 104 C178 136 154 154 130 154 C106 154 82 136 78 104 C74 72 90 44 130 44 Z" fill="#cfe0a8" stroke="#a9c07e" stroke-width="2.4"/>' +
+        '<g stroke="#b3c98a" stroke-width="2" fill="none"><path d="M130 48 L130 152"/><path d="M96 58 C116 84 144 84 164 58"/><path d="M84 106 C110 94 150 94 176 106"/></g>' +
+        '<g fill="#b99a6a"><path d="M130 46 C122 38 118 30 120 24 C126 28 130 38 130 46 Z"/>' +
+        '<path d="M130 46 C138 38 142 30 140 24 C134 28 130 38 130 46 Z"/>' +
+        '<path d="M130 46 C130 36 132 28 136 24 C136 34 134 42 130 46 Z"/></g>'
+    };
+
+    var overlay = overlays(kind, base);
+    var inner = shapes[base] || shapes.leaf;
+
+    return '<svg viewBox="0 0 260 176" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="病虫害示意图" preserveAspectRatio="xMidYMid meet">' +
+      '<defs><clipPath id="' + clip + '"><path d="' + leafPath + '"/></clipPath></defs>' +
+      (base === 'leaf' ? '<g clip-path="url(#' + clip + ')">' + inner + overlay + '</g><path d="' + leafPath + '" fill="none" stroke="#5c9b5f" stroke-width="2.4"/>' : inner + overlay) +
+      '</svg>';
+  }
+
+  function overlays(kind, base) {
+    var s = '';
+    switch (kind) {
+      case 'rust':
+        s += '<g fill="#e5a63c" stroke="#c9862a" stroke-width=".8">' +
+          '<ellipse cx="86" cy="104" rx="7" ry="3.2" transform="rotate(-26 86 104)"/><ellipse cx="102" cy="96" rx="8" ry="3.4" transform="rotate(-26 102 96)"/>' +
+          '<ellipse cx="120" cy="90" rx="9" ry="3.6" transform="rotate(-24 120 90)"/><ellipse cx="139" cy="84" rx="8" ry="3.4" transform="rotate(-22 139 84)"/>' +
+          '<ellipse cx="158" cy="79" rx="7" ry="3.2" transform="rotate(-20 158 79)"/><ellipse cx="176" cy="74" rx="6" ry="3" transform="rotate(-18 176 74)"/>' +
+          '<ellipse cx="96" cy="120" rx="7" ry="3.2" transform="rotate(-20 96 120)"/><ellipse cx="116" cy="114" rx="8" ry="3.4" transform="rotate(-18 116 114)"/>' +
+          '<ellipse cx="136" cy="108" rx="7" ry="3" transform="rotate(-16 136 108)"/><ellipse cx="154" cy="102" rx="6" ry="2.8" transform="rotate(-14 154 102)"/>' +
+          '</g><g fill="#f6cf7a" opacity=".8">' +
+          '<circle cx="100" cy="101" r="1.3"/><circle cx="128" cy="92" r="1.2"/><circle cx="148" cy="87" r="1.1"/><circle cx="168" cy="80" r="1"/>' +
+          '<circle cx="110" cy="117" r="1.1"/><circle cx="142" cy="106" r="1"/></g>';
+        break;
+      case 'mold':
+        s += '<g opacity=".92">' +
+          '<ellipse cx="132" cy="104" rx="26" ry="20" fill="#f2b9c7" opacity=".55"/>' +
+          '<g fill="#f7c9d4"><circle cx="120" cy="96" r="6"/><circle cx="132" cy="100" r="7"/><circle cx="144" cy="95" r="5.6"/>' +
+          '<circle cx="126" cy="110" r="5.4"/><circle cx="139" cy="110" r="6.2"/><circle cx="148" cy="104" r="4.6"/></g>' +
+          '<g fill="#e79fb2" opacity=".8"><circle cx="124" cy="92" r="2.6"/><circle cx="138" cy="94" r="2.4"/><circle cx="131" cy="113" r="2.2"/></g>' +
+          '</g><g fill="#3a2f26"><circle cx="118" cy="86" r="1.5"/><circle cx="146" cy="114" r="1.4"/><circle cx="152" cy="88" r="1.2"/></g>';
+        break;
+      case 'longspot':
+        s += '<g fill="#a97840" stroke="#8a5c2e" stroke-width="1">' +
+          '<ellipse cx="118" cy="96" rx="38" ry="9" transform="rotate(-14 118 96)"/>' +
+          '<ellipse cx="152" cy="118" rx="30" ry="7" transform="rotate(-10 152 118)"/></g>' +
+          '<g fill="#c99a62" opacity=".7"><ellipse cx="112" cy="94" rx="22" ry="4" transform="rotate(-14 112 94)"/></g>' +
+          '<g fill="#e8dfae" opacity=".5"><ellipse cx="170" cy="86" rx="16" ry="6" transform="rotate(-14 170 86)"/></g>';
+        break;
+      case 'angular':
+        s += '<g fill="#e3c66a" stroke="#b99a3e" stroke-width="1.2">' +
+          '<path d="M92 104 L118 84 L142 100 L128 124 L100 122 Z"/>' +
+          '<path d="M150 96 L172 82 L190 100 L172 116 Z"/>' +
+          '<path d="M108 74 L128 62 L144 74 L128 86 Z"/></g>' +
+          '<g fill="#6f7a4a" opacity=".55"><circle cx="112" cy="104" r="2"/><circle cx="130" cy="106" r="1.6"/><circle cx="166" cy="100" r="1.8"/></g>';
+        break;
+      case 'armyworm':
+        s += '<g fill="#f7f0d2" stroke="#d9cfa8" stroke-width="1">' +
+          '<circle cx="96" cy="84" r="4"/><circle cx="104" cy="84" r="4"/><circle cx="112" cy="84" r="4"/><circle cx="120" cy="84" r="4"/></g>' +
+          '<g transform="rotate(-12 140 108)">' +
+          '<g stroke="#76854a" stroke-width="1.4">' +
+          '<circle cx="116" cy="112" r="9" fill="#9fb06a"/><circle cx="130" cy="110" r="9.5" fill="#b0bf79"/>' +
+          '<circle cx="144" cy="108" r="9.5" fill="#9fb06a"/><circle cx="158" cy="106" r="9" fill="#b0bf79"/>' +
+          '<circle cx="169" cy="104" r="7.6" fill="#8fa05c"/></g>' +
+          '<g stroke="#76854a" stroke-width="2.2" stroke-linecap="round">' +
+          '<path d="M118 121 l-2 6"/><path d="M132 119 l-2 6"/><path d="M146 117 l-2 6"/><path d="M159 115 l-2 5"/></g>' +
+          '<circle cx="176" cy="99" r="8.8" fill="#5f6b3a"/>' +
+          '<g fill="#e9efd2"><circle cx="173" cy="97" r="2"/><circle cx="180" cy="97" r="2"/></g>' +
+          '<path d="M174 91 q6 -7 10 -8" stroke="#5f6b3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>' +
+          '<path d="M181 91 q4 -6 8 -5" stroke="#5f6b3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>' +
+          '</g>' +
+          '<g fill="#4a3a24" opacity=".8"><circle cx="108" cy="126" r="1.4"/><circle cx="124" cy="128" r="1.2"/><circle cx="140" cy="126" r="1.3"/></g>';
+        break;
+      case 'whiteMold':
+        s += '<g stroke="#fffdf4" stroke-width="3.2" fill="none" stroke-linecap="round" opacity=".95">' +
+          '<path d="M128 148 C118 132 104 124 96 108"/><path d="M128 148 C126 128 120 116 112 100"/>' +
+          '<path d="M130 148 C136 130 148 120 156 104"/><path d="M130 148 C142 136 154 132 166 126"/>' +
+          '<path d="M126 148 C112 144 100 138 88 138"/></g>' +
+          '<g fill="#fffaf0" stroke="#e6dcc0" stroke-width="1"><circle cx="98" cy="110" r="5"/><circle cx="112" cy="100" r="4.2"/><circle cx="158" cy="106" r="4.6"/><circle cx="166" cy="128" r="3.8"/></g>' +
+          '<g fill="#8a5f3a"><circle cx="118" cy="136" r="4"/><circle cx="140" cy="140" r="3.6"/><circle cx="150" cy="126" r="3.2"/></g>';
+        break;
+      case 'maggot':
+        s += '<g fill="#f6efe0" stroke="#d6c9b2" stroke-width="1">' +
+          '<ellipse cx="118" cy="128" rx="5" ry="9" transform="rotate(-24 118 128)"/>' +
+          '<ellipse cx="132" cy="134" rx="5" ry="9" transform="rotate(-8 132 134)"/>' +
+          '<ellipse cx="146" cy="128" rx="5" ry="9" transform="rotate(18 146 128)"/>' +
+          '<ellipse cx="124" cy="116" rx="4.4" ry="8" transform="rotate(-40 124 116)"/></g>' +
+          '<g fill="#8b5a34" opacity=".8"><ellipse cx="130" cy="140" rx="20" ry="8"/><circle cx="112" cy="146" r="2.4"/><circle cx="148" cy="146" r="2"/></g>' +
+          '<path d="M100 112 q14 8 28 4" stroke="#7d4f2e" stroke-width="2" fill="none" opacity=".7"/>';
+        break;
+      case 'grayMold':
+        s += '<g fill="#d5d2c8" opacity=".9">' +
+          '<circle cx="112" cy="88" r="10"/><circle cx="128" cy="84" r="12"/><circle cx="146" cy="92" r="9"/>' +
+          '<circle cx="118" cy="104" r="11"/><circle cx="138" cy="106" r="12"/><circle cx="154" cy="104" r="7"/></g>' +
+          '<g fill="#eceade" opacity=".95">' +
+          '<circle cx="116" cy="86" r="6"/><circle cx="132" cy="82" r="7"/><circle cx="150" cy="94" r="5"/>' +
+          '<circle cx="124" cy="102" r="6"/><circle cx="142" cy="102" r="7"/><circle cx="134" cy="94" r="5.5"/></g>' +
+          '<g fill="#a8a294" opacity=".6">' +
+          '<circle cx="108" cy="96" r="2"/><circle cx="136" cy="92" r="2.2"/><circle cx="148" cy="110" r="1.8"/>' +
+          '<circle cx="120" cy="112" r="1.6"/><circle cx="156" cy="98" r="1.6"/></g>' +
+          '<path d="M104 118 q18 12 40 2" stroke="#8b6b4f" stroke-width="2.2" fill="none" opacity=".45"/>';
+        break;
+      case 'canker':
+        s += '<ellipse cx="126" cy="124" rx="30" ry="17" fill="#8a4b33" transform="rotate(-10 126 124)"/>' +
+          '<ellipse cx="126" cy="124" rx="21" ry="11" fill="#6d3423" transform="rotate(-10 126 124)"/>' +
+          '<g stroke="#4d2417" stroke-width="2" fill="none" opacity=".8">' +
+          '<path d="M104 118 q8 12 20 14"/><path d="M132 112 q10 4 14 14"/></g>' +
+          '<g fill="#3a2b20"><circle cx="150" cy="118" r="2"/><circle cx="156" cy="128" r="1.7"/><circle cx="146" cy="134" r="1.6"/></g>' +
+          '<g fill="#c9a88a" opacity=".5"><ellipse cx="118" cy="118" rx="10" ry="4" transform="rotate(-14 118 118)"/></g>';
+        break;
+      case 'blackRot':
+        s += '<ellipse cx="130" cy="118" rx="24" ry="17" fill="#4a3a2c"/>' +
+          '<ellipse cx="130" cy="118" rx="15" ry="10" fill="#2f2419"/>' +
+          '<g fill="#1f1811"><circle cx="146" cy="106" r="1.8"/><circle cx="152" cy="116" r="1.5"/><circle cx="120" cy="104" r="1.4"/><circle cx="138" cy="132" r="1.6"/></g>' +
+          '<g stroke="#6a5847" stroke-width="1.4" opacity=".8"><path d="M110 112 q10 -4 18 -2"/><path d="M140 126 q8 2 12 6"/></g>';
+        break;
+      case 'virus':
+        s += '<g fill="#d9cf62" opacity=".85">' +
+          '<path d="M86 106 q14 -16 30 -10 q-4 16 -18 20 q-10 3 -12 -10z"/>' +
+          '<path d="M130 94 q18 -8 26 6 q-10 12 -24 8 q-8 -4 -2 -14z"/>' +
+          '<path d="M112 128 q16 2 22 -8 q4 14 -8 20 q-12 5 -14 -12z"/></g>' +
+          '<g fill="#a8b24a" opacity=".6"><circle cx="104" cy="104" r="6"/><circle cx="146" cy="106" r="5"/><circle cx="126" cy="124" r="4.6"/></g>' +
+          '<g fill="#fffdf2" opacity=".9"><ellipse cx="118" cy="82" rx="3.4" ry="2" transform="rotate(-20 118 82)"/><ellipse cx="136" cy="78" rx="3" ry="1.8" transform="rotate(10 136 78)"/></g>' +
+          '<path d="M96 132 q22 8 40 -4" stroke="#8a9a3a" stroke-width="2" fill="none" opacity=".6"/>';
+        break;
+      case 'bacterial':
+        s += '<ellipse cx="128" cy="128" rx="26" ry="14" fill="#7c6a44" opacity=".55"/>' +
+          '<ellipse cx="128" cy="128" rx="16" ry="8" fill="#5f5236" opacity=".7"/>' +
+          '<g fill="#fdf8e6" stroke="#e0d6b8" stroke-width=".8"><circle cx="138" cy="122" r="3"/><circle cx="146" cy="128" r="2.4"/><circle cx="132" cy="134" r="2.2"/></g>' +
+          '<g stroke="#6b5a3a" stroke-width="1.6" opacity=".6" fill="none"><path d="M108 120 q10 10 24 12"/></g>';
+        break;
+      case 'borer':
+        s += '<ellipse cx="146" cy="112" rx="11" ry="9" fill="#5c3a24"/>' +
+          '<g fill="#c9b078" stroke="#a98f56" stroke-width="1"><circle cx="140" cy="110" r="5"/><circle cx="149" cy="107" r="5"/><circle cx="154" cy="114" r="4.6"/></g>' +
+          '<g fill="#3f2e1c"><circle cx="144" cy="108" r="1.1"/><circle cx="150" cy="112" r="1"/></g>' +
+          '<g fill="#6b4a2a" opacity=".85"><circle cx="132" cy="124" r="1.8"/><circle cx="140" cy="128" r="1.5"/><circle cx="150" cy="126" r="1.6"/><circle cx="126" cy="118" r="1.3"/></g>' +
+          '<path d="M120 132 q14 10 30 6" stroke="#7d5433" stroke-width="1.8" fill="none" opacity=".7"/>';
+        break;
+      default:
+        s += '<g fill="#a97840"><circle cx="112" cy="104" r="9"/><circle cx="140" cy="96" r="7"/><circle cx="128" cy="124" r="6"/></g>';
+    }
+    return s;
+  }
+
+  g.NZ = g.NZ || {};
+  g.NZ.art = { assistant: assistant, assistantHead: assistantHead, plant: plant, specimen: specimen };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* ===========================================================
+   农知精灵 · 大模型接入层（可插拔）
+   - 只做“理解”：把口语问题归一化成「作物 + 部位 + 症状」
+   - 知识检索与作答仍由内置知识库约束，模型不产出事实
+   - 未配置 / 调用失败 → 自动降级为纯检索，界面明确标注
+   =========================================================== */
+(function (g) {
+  'use strict';
+
+  var CFG_KEY = 'nz.llm.v1';
+  var LOG_KEY = 'nz.ai.log.v1';
+  var STAT_KEY = 'nz.stats.v1';
+
+  var DEFAULT = {
+    enabled: false,
+    endpoint: '/api/chat',
+    model: 'deepseek-chat',
+    key: '',
+    promptVersion: 'v2'
+  };
+
+  var PROMPTS = {
+    v1: {
+      name: 'v1 · 直译',
+      desc: '只把口语改写成书面问句，不抽取字段。用于对照实验。',
+      system: '你是农业问答系统的中文输入规范化助手。把用户的口语问题改写成一个简洁的书面问句，保留作物名、部位、症状等关键信息，不要回答问题，不要解释。只输出改写后的问句。'
+    },
+    v2: {
+      name: 'v2 · 结构化抽取',
+      desc: '抽取作物/部位/症状，并输出归一化问句。当前默认版本。',
+      system: '你是农业问答系统的输入解析器。只输出 JSON，不要输出任何解释。格式：{"crop":"","part":"","symptom":"","normalized":""}。crop 只能填：小麦、玉米、花生、大蒜、苹果、设施蔬菜、生姜、大葱、甘薯、棉花，无法判断时填空字符串；normalized 是把口语改写成“作物+部位+症状”的书面问句，不得加入用户没有提供的信息。'
+    },
+    v3: {
+      name: 'v3 · 严格约束',
+      desc: '在 v2 基础上禁止猜测，宁可留空；用于防幻觉基线。',
+      system: '你是农业问答系统的输入解析器。只输出 JSON，格式：{"crop":"","part":"","symptom":"","normalized":""}。规则：1）只能使用用户明确提到的信息，禁止推测；2）crop 必须是以下之一：小麦、玉米、花生、大蒜、苹果、设施蔬菜、生姜、大葱、甘薯、棉花，否则留空；3）symptom 只摘录用户原话中的症状词；4）normalized 不得添加任何新信息。不要输出解释。'
+    }
+  };
+
+  function loadCfg() {
+    try {
+      var raw = localStorage.getItem(CFG_KEY);
+      if (!raw) return JSON.parse(JSON.stringify(DEFAULT));
+      return Object.assign(JSON.parse(JSON.stringify(DEFAULT)), JSON.parse(raw));
+    } catch (e) { return JSON.parse(JSON.stringify(DEFAULT)); }
+  }
+  function saveCfg(c) { try { localStorage.setItem(CFG_KEY, JSON.stringify(c)); } catch (e) {} }
+  function enabled() { var c = loadCfg(); return !!(c.enabled && c.endpoint); }
+
+  function log(rec) {
+    try {
+      var arr = JSON.parse(localStorage.getItem(LOG_KEY) || '[]');
+      arr.unshift(rec);
+      if (arr.length > 50) arr = arr.slice(0, 50);
+      localStorage.setItem(LOG_KEY, JSON.stringify(arr));
+    } catch (e) {}
+  }
+  function logs() {
+    try { return JSON.parse(localStorage.getItem(LOG_KEY) || '[]'); } catch (e) { return []; }
+  }
+
+  function stats() {
+    try {
+      return Object.assign({ asks: 0, refuses: 0, reviews: 0, exports: 0 }, JSON.parse(localStorage.getItem(STAT_KEY) || '{}'));
+    } catch (e) { return { asks: 0, refuses: 0, reviews: 0, exports: 0 }; }
+  }
+  function bump(field) {
+    var s = stats(); s[field] = (s[field] || 0) + 1;
+    try { localStorage.setItem(STAT_KEY, JSON.stringify(s)); } catch (e) {}
+    return s;
+  }
+
+  function stripFence(t) {
+    return String(t || '').replace(/^```(?:json)?/i, '').replace(/```$/, '').trim();
+  }
+
+  function call(messages, timeoutMs) {
+    var cfg = loadCfg();
+    var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, timeoutMs || 4000);
+    var headers = { 'Content-Type': 'application/json' };
+    if (cfg.key) headers['X-API-Key'] = cfg.key;
+    return fetch(cfg.endpoint, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify({ model: cfg.model, messages: messages, temperature: 0.1 }),
+      signal: ctrl ? ctrl.signal : undefined
+    }).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    }).then(function (d) {
+      var c = d && d.choices && d.choices[0] && d.choices[0].message && d.choices[0].message.content;
+      if (!c) throw new Error('empty');
+      return stripFence(c);
+    }).finally(function () { clearTimeout(timer); });
+  }
+
+  /* 归一化：返回 { ok, crop, part, symptom, normalized, version, ms, raw } */
+  function normalize(text, timeoutMs) {
+    if (!enabled()) return Promise.resolve({ ok: false, reason: 'disabled' });
+    var cfg = loadCfg();
+    var ver = PROMPTS[cfg.promptVersion] ? cfg.promptVersion : 'v2';
+    var t0 = Date.now();
+    return call([
+      { role: 'system', content: PROMPTS[ver].system },
+      { role: 'user', content: text }
+    ], timeoutMs).then(function (content) {
+      var out = { ok: true, version: ver, raw: content, crop: '', part: '', symptom: '', normalized: text };
+      if (ver === 'v1') {
+        out.normalized = content;
+      } else {
+        var obj = JSON.parse(content);
+        out.crop = obj.crop || '';
+        out.part = obj.part || '';
+        out.symptom = obj.symptom || '';
+        out.normalized = obj.normalized || text;
+      }
+      out.ms = Date.now() - t0;
+      log({ t: Date.now(), q: text, normalized: out.normalized, crop: out.crop, version: ver, ok: true, ms: out.ms });
+      return out;
+    }).catch(function (err) {
+      log({ t: Date.now(), q: text, version: ver, ok: false, error: String(err && err.message || err), ms: Date.now() - t0 });
+      return { ok: false, reason: String(err && err.message || err), version: ver };
+    });
+  }
+
+  function health() {
+    var cfg = loadCfg();
+    return fetch(cfg.endpoint.replace(/\/chat$/, '/health'), { method: 'GET' })
+      .then(function (r) { return r.json(); })
+      .catch(function () { return { llm: false }; });
+  }
+
+  g.NZ = g.NZ || {};
+  g.NZ.llm = {
+    PROMPTS: PROMPTS,
+    loadCfg: loadCfg,
+    saveCfg: saveCfg,
+    enabled: enabled,
+    normalize: normalize,
+    logs: logs,
+    stats: stats,
+    bump: bump,
+    health: health
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* ===========================================================
+   农知精灵 · 人工复核台
+   纠错 → 待复核 → 农技员改写/确认 → 专家复核标记 → 导出留痕
+   =========================================================== */
+(function (g) {
+  'use strict';
+
+  var REVIEW_KEY = 'nz.reviews.v1';
+  var LLM = g.NZ && g.NZ.llm;
+
+  function all() {
+    try { return JSON.parse(localStorage.getItem(REVIEW_KEY) || '[]'); } catch (e) { return []; }
+  }
+  function save(arr) { try { localStorage.setItem(REVIEW_KEY, JSON.stringify(arr)); } catch (e) {} }
+
+  function add(rec) {
+    var arr = all();
+    rec.id = 'R' + Date.now().toString(36).toUpperCase();
+    rec.ts = Date.now();
+    rec.status = 'pending';
+    arr.unshift(rec);
+    save(arr);
+    if (LLM) LLM.bump('reviews');
+    return rec;
+  }
+
+  function update(id, patch) {
+    var arr = all();
+    for (var i = 0; i < arr.length; i++) {
+      if (arr[i].id === id) {
+        Object.assign(arr[i], patch, { reviewedAt: Date.now() });
+        break;
+      }
+    }
+    save(arr);
+  }
+
+  function remove(id) {
+    save(all().filter(function (r) { return r.id !== id; }));
+  }
+
+  function fmt(ts) {
+    var d = new Date(ts);
+    function p(n) { return n < 10 ? '0' + n : '' + n; }
+    return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+  }
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  /* 导出：生成 Word 可打开的 .doc（HTML 方言），并留一条导出记录 */
+  function exportDoc(title, bodyHtml, filename) {
+    var head = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>' +
+      esc(title) + '</title><style>body{font-family:"宋体",serif;font-size:11pt;line-height:1.7}h1{font-family:"黑体";font-size:16pt}h2{font-family:"黑体";font-size:13pt;margin-top:18pt}table{border-collapse:collapse;width:100%}td,th{border:1px solid #999;padding:4px 6px;font-size:10pt;vertical-align:top}</style></head><body>';
+    var html = head + bodyHtml + '
+<script>
+(function(){
+  function openReview(e){
+    if(e) e.preventDefault();
+    var m=document.getElementById('reviewModal');
+    if(!m) return;
+    m.hidden=false; document.body.style.overflow='hidden';
+    if(window.NZ && NZ.review) NZ.review.render();
+  }
+  function closeReview(){
+    var m=document.getElementById('reviewModal');
+    if(m){ m.hidden=true; document.body.style.overflow=''; }
+  }
+  document.addEventListener('click', function(e){
+    var a=e.target.closest('#openReview');
+    if(a) openReview(e);
+    var c=e.target.closest('#reviewClose');
+    if(c) closeReview();
+    var m=document.getElementById('reviewModal');
+    if(m && e.target===m) closeReview();
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.key==='Escape'){ closeReview(); }
+  });
+  if(location.hash==='#review') setTimeout(openReview, 300);
+})();
+</script>
+</body></html>';
+    var blob = new Blob(['\ufeff' + html], { type: 'application/msword' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename || ('农知精灵-导出-' + Date.now() + '.doc');
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 800);
+    if (LLM) LLM.bump('exports');
+  }
+
+  function exportReviews() {
+    var arr = all();
+    var rows = arr.map(function (r) {
+      return '<tr><td>' + esc(r.id) + '</td><td>' + esc(fmt(r.ts)) + '</td><td>' + esc(r.q) + '</td><td>' +
+        esc(r.entryTitle || '') + '</td><td>' + esc(r.reason) + '</td><td>' + esc(r.note || '') + '</td><td>' +
+        esc(r.edited || '') + '</td><td>' + (r.status === 'approved' ? '已复核' : r.status === 'rejected' ? '驳回' : '待复核') + '</td></tr>';
+    }).join('');
+    exportDoc('农知精灵 · 人工复核记录',
+      '<h1>农知精灵 · 人工复核记录</h1><p>导出时间：' + fmt(Date.now()) + '　共 ' + arr.length + ' 条</p>' +
+      '<table><tr><th>编号</th><th>提交时间</th><th>原问题</th><th>命中条目</th><th>问题类型</th><th>用户说明</th><th>专家改写</th><th>状态</th></tr>' + rows + '</table>',
+      '农知精灵-复核记录.doc');
+  }
+
+  function exportAnswer(rec) {
+    exportDoc('农知精灵 · 问答记录',
+      '<h1>农知精灵 · 问答记录</h1><p>时间：' + fmt(rec.ts) + '</p>' +
+      '<h2>问题</h2><p>' + esc(rec.q) + '</p>' +
+      '<h2>命中条目</h2><p>' + esc(rec.entryTitle || '') + '</p>' +
+      '<h2>答案要点</h2><p>' + esc(rec.answer || '') + '</p>',
+      '农知精灵-问答-' + rec.id + '.doc');
+  }
+
+  /* ---------- 页面渲染（仅 review.html 使用） ---------- */
+  function renderStats() {
+    var s = LLM ? LLM.stats() : { asks: 0, refuses: 0, reviews: 0, exports: 0 };
+    var map = { statAsks: s.asks, statRefuses: s.refuses, statReviews: s.reviews, statExports: s.exports, statQueue: all().filter(function (r) { return r.status === 'pending'; }).length };
+    Object.keys(map).forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = map[id];
+    });
+  }
+
+  function renderQueue() {
+    var box = document.getElementById('queue');
+    if (!box) return;
+    var arr = all();
+    if (!arr.length) {
+      box.innerHTML = '<p class="empty">还没有纠错记录。在问答页点「这条不对」提交一条，就会出现在这里。</p>';
+      return;
+    }
+    box.innerHTML = arr.map(function (r) {
+      var badge = r.status === 'approved' ? '<span class="pill ok">已复核</span>' : r.status === 'rejected' ? '<span class="pill no">驳回</span>' : '<span class="pill wait">待复核</span>';
+      return '<div class="review-item" data-id="' + esc(r.id) + '">' +
+        '<div class="review-head"><b>' + esc(r.q) + '</b>' + badge + '<span class="ts">' + fmt(r.ts) + '</span></div>' +
+        '<div class="review-meta">命中：' + esc(r.entryTitle || '—') + '　类型：' + esc(r.reason) + '</div>' +
+        (r.note ? '<div class="review-note">用户说明：' + esc(r.note) + '</div>' : '') +
+        '<textarea class="review-edit" rows="3" placeholder="农技员改写：写下更准确的答案（可留空）">' + esc(r.edited || '') + '</textarea>' +
+        '<div class="review-actions">' +
+        '<button class="mini-act" data-act="approve">通过 / 保存改写</button>' +
+        '<button class="mini-act" data-act="reject">驳回</button>' +
+        '<button class="mini-act" data-act="export">导出这条</button>' +
+        '<button class="mini-act" data-act="del">删除</button>' +
+        '</div></div>';
+    }).join('');
+  }
+
+  function renderPrompts() {
+    var box = document.getElementById('prompts');
+    if (!box || !LLM) return;
+    var cfg = LLM.loadCfg();
+    box.innerHTML = Object.keys(LLM.PROMPTS).map(function (k) {
+      var p = LLM.PROMPTS[k];
+      var on = cfg.promptVersion === k;
+      return '<div class="prompt' + (on ? ' on' : '') + '" data-ver="' + k + '">' +
+        '<div class="prompt-head"><b>' + p.name + '</b>' + (on ? '<span class="pill ok">当前</span>' : '') + '</div>' +
+        '<p>' + p.desc + '</p>' +
+        '<pre>' + esc(p.system) + '</pre>' +
+        (on ? '' : '<button class="mini-act" data-set="' + k + '">切换到这个版本</button>') +
+        '</div>';
+    }).join('');
+  }
+
+  function renderLogs() {
+    var box = document.getElementById('logs');
+    if (!box || !LLM) return;
+    var arr = LLM.logs();
+    if (!arr.length) { box.innerHTML = '<p class="empty">还没有调用记录。在问答页用 AI 模式提一个问题，这里会出现归一化结果与耗时。</p>'; return; }
+    box.innerHTML = '<table class="log-table"><tr><th>时间</th><th>原问题</th><th>归一化</th><th>作物</th><th>提示词</th><th>结果</th><th>耗时</th></tr>' +
+      arr.slice(0, 20).map(function (r) {
+        return '<tr><td>' + fmt(r.t) + '</td><td>' + esc(r.q) + '</td><td>' + esc(r.normalized || '') + '</td><td>' +
+          esc(r.crop || '—') + '</td><td>' + esc(r.version || '') + '</td><td>' + (r.ok ? '成功' : '失败') + '</td><td>' + (r.ms || '') + ' ms</td></tr>';
+      }).join('') + '</table>';
+  }
+
+  function bind() {
+    var q = document.getElementById('queue');
+    if (q) {
+      q.addEventListener('click', function (e) {
+        var btn = e.target.closest('[data-act]');
+        if (!btn) return;
+        var item = btn.closest('.review-item');
+        var id = item.getAttribute('data-id');
+        var act = btn.getAttribute('data-act');
+        if (act === 'approve') {
+          var edited = item.querySelector('.review-edit').value.trim();
+          update(id, { status: 'approved', edited: edited });
+        } else if (act === 'reject') {
+          update(id, { status: 'rejected' });
+        } else if (act === 'del') {
+          remove(id);
+        } else if (act === 'export') {
+          var rec = all().filter(function (r) { return r.id === id; })[0];
+          if (rec) exportAnswer(rec);
+        }
+        renderQueue(); renderStats();
+      });
+    }
+    var p = document.getElementById('prompts');
+    if (p) {
+      p.addEventListener('click', function (e) {
+        var b = e.target.closest('[data-set]');
+        if (!b || !LLM) return;
+        var cfg = LLM.loadCfg();
+        cfg.promptVersion = b.getAttribute('data-set');
+        LLM.saveCfg(cfg);
+        renderPrompts();
+      });
+    }
+    var ex = document.getElementById('exportAll');
+    if (ex) ex.addEventListener('click', exportReviews);
+    var exLog = document.getElementById('exportLogs');
+    if (exLog) exLog.addEventListener('click', function () {
+      var data = JSON.stringify({ logs: LLM ? LLM.logs() : [], reviews: all(), stats: LLM ? LLM.stats() : {} }, null, 2);
+      var blob = new Blob([data], { type: 'application/json' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = '农知精灵-调用日志-' + Date.now() + '.json';
+      a.click();
+      setTimeout(function () { URL.revokeObjectURL(a.href); }, 800);
+    });
+  }
+
+  g.NZ = g.NZ || {};
+  g.NZ.review = {
+    all: all, add: add, update: update, remove: remove,
+    exportReviews: exportReviews, exportAnswer: exportAnswer, exportDoc: exportDoc,
+    render: function () { renderStats(); renderQueue(); renderPrompts(); renderLogs(); }
+  };
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { bind(); if (document.getElementById('queue')) g.NZ.review.render(); });
+  else { bind(); if (document.getElementById('queue')) g.NZ.review.render(); }
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* ===========================================================
+   农知精灵 · 应用逻辑
+   1) 检索式问答：只从内置知识库取答案，低于阈值就拒答
+   2) 植物萌宠：随机生病 → 选治疗方案 → 对错都讲解
+   3) 大字模式 / 知识库 / 朗读 / 复制 / 语音输入
+   =========================================================== */
+(function () {
+  'use strict';
+
+  var NZ = window.NZ;
+  if (!NZ) return;
+  var KB = NZ.KB, CROPS = NZ.CROPS, QUIZ = NZ.QUIZ, FACTS = NZ.FACTS;
+  var ART = NZ.art;
+  var LLM = NZ.llm || null;
+  var REVIEW = NZ.review || null;
+
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+
+  /* ---------------- 基础工具 ---------------- */
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+  function norm(s) {
+    return String(s || '').toLowerCase()
+      .replace(/叶子|叶儿/g, '叶片')
+      .replace(/杆子|秸秆/g, '茎秆')
+      .replace(/[\s\u3000]+/g, '')
+      .replace(/[，。！？、；：,.!?;:~（）()【】\[\]"'“”‘’]/g, '');
+  }
+  function bigrams(s) {
+    var t = String(s || '').replace(/[^\u4e00-\u9fa5a-z0-9]/g, '');
+    var set = new Set();
+    for (var i = 0; i < t.length - 1; i++) set.add(t.slice(i, i + 2));
+    return set;
+  }
+  function uniq(arr) { return arr.filter(function (v, i) { return arr.indexOf(v) === i; }); }
+  function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+  var toastTimer = 0;
+  function toast(msg) {
+    var t = $('#toast');
+    t.textContent = msg;
+    t.classList.add('is-on');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.classList.remove('is-on'); }, 2600);
+  }
+
+  /* ---------------- 存储 ---------------- */
+  var PET_KEY = 'nz.pet.v1', PREF_KEY = 'nz.pref.v1';
+  function load(key, fallback) {
+    try {
+      var raw = localStorage.getItem(key);
+      if (!raw) return JSON.parse(JSON.stringify(fallback));
+      var obj = JSON.parse(raw);
+      return Object.assign(JSON.parse(JSON.stringify(fallback)), obj);
+    } catch (e) { return JSON.parse(JSON.stringify(fallback)); }
+  }
+  function save(key, obj) {
+    try { localStorage.setItem(key, JSON.stringify(obj)); } catch (e) { /* 隐私模式忽略 */ }
+  }
+
+  var DEFAULT_PET = {
+    growth: 0, health: 100, ok: 0, wrong: 0,
+    streak: 0, best: 0, badges: [], seen: [], lastCare: 0, played: 0, log: []
+  };
+  var pet = load(PET_KEY, DEFAULT_PET);
+  var pref = load(PREF_KEY, { simple: false });
+  var ui = { view: 'chat', quiz: null, answered: false, mood: 'ok', timer: 0, cropFilter: 'all', search: '' };
+
+  var STAGE_NAMES = ['幼芽', '幼苗', '成株', '开花', '结果'];
+  function stageOf(g) { return g >= 90 ? 4 : g >= 70 ? 3 : g >= 45 ? 2 : g >= 20 ? 1 : 0; }
+
+  /* ---------------- 知识库索引 ---------------- */
+  var INDEX = KB.map(function (e) {
+    return {
+      e: e,
+      title: e.title.toLowerCase(),
+      aliases: e.aliases.map(function (a) { return a.toLowerCase(); }),
+      keywords: e.keywords.map(function (k) { return k.toLowerCase(); }),
+      grams: bigrams(e.title + e.symptoms + e.keywords.join(''))
+    };
+  });
+
+  var CROP_ALIAS = {
+    wheat: ['小麦', '麦子', '麦苗', '冬小麦', '麦'],
+    corn: ['玉米', '苞米', '棒子', '苞谷'],
+    peanut: ['花生', '落花生'],
+    garlic: ['大蒜', '蒜薹', '蒜苗', '蒜'],
+    apple: ['苹果', '果树'],
+    veg: ['番茄', '西红柿', '黄瓜', '辣椒', '茄子', '大棚', '棚里', '设施蔬菜', '蔬菜'],
+    ginger: ['生姜', '大姜', '姜'],
+    scallion: ['大葱', '葱白', '葱'],
+    sweet: ['甘薯', '红薯', '地瓜', '山芋'],
+    cotton: ['棉花', '棉']
+  };
+
+  function detectCrop(q) {
+    var found = null, bestLen = 0;
+    CROPS.forEach(function (c) {
+      var list = CROP_ALIAS[c.id] || [c.name];
+      if (list.indexOf(c.name) < 0) list = [c.name].concat(list);
+      list.forEach(function (a) {
+        if (a.length >= 1 && q.indexOf(a) >= 0 && a.length > bestLen) {
+          found = c; bestLen = a.length;
+        }
+      });
+    });
+    return found;
+  }
+
+  function scoreIt(it, q, crop) {
+    var s = 0;
+    if (q.indexOf(it.title) >= 0) s += 18;
+    it.aliases.forEach(function (a) { if (a.length >= 2 && q.indexOf(a) >= 0) s += 11; });
+    it.keywords.forEach(function (k) { if (q.indexOf(k) >= 0) s += 4; });
+    if (crop && it.e.cropId === crop.id) s += 5;
+    var qb = bigrams(q), hit = 0;
+    qb.forEach(function (g) { if (it.grams.has(g)) hit++; });
+    s += Math.min(hit, 8) * 0.8;
+    return s;
+  }
+
+  /* ---------------- 回答渲染 ---------------- */
+  function speakText(e) {
+    return e.title + '。' + e.short + ' 怎么认：' + e.symptoms +
+      ' 怎么办：' + e.control.join(' ') + ' 注意：' + e.tip;
+  }
+
+  function cell(label, value) {
+    return '<div class="ans-cell"><dt>' + label + '</dt><dd>' + esc(value) + '</dd></div>';
+  }
+
+  function entryHtml(e, s, lowConf, alt) {
+    var pct = Math.max(70, Math.min(97, Math.round(58 + s * 2.2)));
+    var related = KB.filter(function (x) { return x.cropId === e.cropId && x.id !== e.id; }).slice(0, 2);
+    var text = speakText(e);
+    var h = '<div class="ans">' +
+      '<div class="ans-head">' +
+        '<span class="tag cat-' + e.cat + '">' + e.cat + '</span>' +
+        '<h3 class="ans-title">' + esc(e.title) + '</h3>' +
+        '<span class="score-pill">匹配 ' + pct + '%</span>' +
+      '</div>' +
+      '<p class="ans-lead">' + esc(e.short) + '</p>' +
+      (lowConf ? '<p class="ans-lead" style="font-size:12.5px;color:#8a6416">我按最接近的条目回答，不一定就是它，请对照症状再确认。</p>' : '') +
+      (alt ? '<div class="chips"><button class="suggest-chip" data-ask="' + esc(alt.title) + '">也可能是：' + esc(alt.title) + '</button></div>' : '') +
+      cell('怎么认', e.symptoms) +
+      '<div class="ans-grid">' + cell('为什么会得', e.cause) + cell('什么时候', e.season) + '</div>' +
+      '<div class="ans-block"><h4>怎么办</h4><ol>' +
+        e.control.map(function (c) { return '<li>' + esc(c) + '</li>'; }).join('') +
+      '</ol></div>' +
+      '<div class="ans-tip"><span class="ico">⚠️</span><span>' + esc(e.tip) + '</span></div>' +
+      '<div class="ans-src">' + srcIcon() + '知识来源：内置知识库 #' + e.id + ' · 匹配度 ' + pct +
+        '% · 只做条目检索，不生成、不扩写</div>' +
+      '<div class="ans-actions">' +
+        '<button class="mini-act" data-speak="' + esc(text) + '">🔊 读给我听</button>' +
+        '<button class="mini-act" data-copy="' + esc(text) + '">⧉ 复制</button>' +
+        '<button class="mini-act" data-feedback="1" data-entry="' + e.id + '" data-title="' + esc(e.title) + '">✎ 这条不对</button>' +
+      '</div>' +
+      (related.length ? '<div class="chips">' + related.map(function (r) {
+        return '<button class="suggest-chip" data-ask="' + esc(r.title) + '">也看看：' + esc(r.title) + '</button>';
+      }).join('') + '</div>' : '') +
+      '</div>';
+    return { html: h, expr: 'idle', entryId: e.id };
+  }
+
+  function srcIcon() {
+    return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h9l4 4v12H6z" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M15 4v4h4M9 12h6M9 16h6" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>';
+  }
+
+  function cropOverview(crop, low) {
+    var list = KB.filter(function (e) { return e.cropId === crop.id; });
+    if (!list.length) return refuse('');
+    var h = '<div class="ans">' +
+      '<div class="ans-head"><span class="tag">作物</span><h3 class="ans-title">' + esc(crop.name) + '</h3>' +
+      '<span class="score-pill">' + list.length + ' 条知识</span></div>' +
+      '<p class="ans-lead">' + esc(crop.tag) + '。' + esc(crop.season) + '。' +
+      (low ? '你说的我没完全对上，先把这一类常出问题列给你。' : '我记住的这些，点开就能问。') + '</p>' +
+      '<div class="ans-grid">' + cell('主产区', crop.region) + cell('我能查的', list.length + ' 条：病虫害与农事要点') + '</div>' +
+      '<div class="chips">' + list.map(function (e) {
+        return '<button class="suggest-chip" data-ask="' + esc(crop.name + ' ' + e.title) + '">' + esc(e.title) + '</button>';
+      }).join('') + '</div>' +
+      '<div class="ans-src">' + srcIcon() + '知识来源：内置知识库 · 小麦、玉米、花生等 10 类作物</div>' +
+      '</div>';
+    return { html: h, expr: 'idle' };
+  }
+
+  function refuse(q, scored) {
+    if (LLM) LLM.bump('refuses');
+    var near = [];
+    if (scored && scored.length) {
+      near = scored.slice(0, 3).map(function (x) { return x.it.e; })
+        .filter(function (e, i, arr) { return arr.indexOf(e) === i; });
+    }
+    var h = '<div class="ans">' +
+      '<p class="ans-lead">这个问题我没法回答——<b>它不在我的知识库里，我不猜。</b></p>' +
+      '<p class="ans-lead" style="font-size:13px">我的知识库只有山东 10 类作物的 25 条病虫害和农事要点。没写进去的，我不会顺口给你一个答案。</p>' +
+      '<div class="ans-tip"><span class="ico">💡</span><span>把话说具体一点：<b>什么作物 + 哪个部位 + 什么症状</b>，比如“番茄 幼果 长灰毛”“小麦 叶片 黄粉”。</span></div>' +
+      (near.length ? '<div class="chips">' + near.map(function (e) {
+        return '<button class="suggest-chip" data-ask="' + esc(e.crop + ' ' + e.title) + '">是不是：' + esc(e.title) + '</button>';
+      }).join('') + '</div>' : '') +
+      '<div class="ans-src">' + srcIcon() + '匹配度低于回答阈值，已拒绝作答</div>' +
+      '</div>';
+    return { html: h, expr: 'worried' };
+  }
+
+  function clarify(scored, raw) {
+    var cands = uniq(scored.slice(0, 4).map(function (x) { return x.it.e.cropId; })).slice(0, 4);
+    var crops = cands.map(function (id) {
+      return CROPS.filter(function (c) { return c.id === id; })[0];
+    }).filter(Boolean);
+    var h = '<div class="ans">' +
+      '<p class="ans-lead">这个症状我好像见过，但要先确认是哪种作物——不同作物、同一个症状，治法可能完全不一样。</p>' +
+      '<div class="clarify-list">' + crops.map(function (c) {
+        return '<button class="clarify-btn" data-ask="' + esc(c.name + ' ' + raw) + '">' + esc(c.em + ' ' + c.name) + '</button>';
+      }).join('') + '</div>' +
+      '<div class="ans-src">' + srcIcon() + '为避免张冠李戴，先缩小作物范围再作答</div>' +
+      '</div>';
+    return { html: h, expr: 'thinking' };
+  }
+
+  /* ---------------- 意图 ---------------- */
+  function metaAnswer(q) {
+    if (/^(你好|您好|hi|hello|嗨|在吗)/.test(q) || q === '' || q === '小穗') {
+      return {
+        html: '<p>你好呀，我是小穗。你可以直接说：<b>什么作物 + 哪个部位 + 什么症状</b>。</p>' +
+          '<p>比如“小麦叶子上有黄粉”“番茄幼果长灰毛”“大蒜叶子发黄”。</p>',
+        expr: 'happy',
+        chips: ['小麦叶子上有黄粉', '番茄幼果长灰毛', '姜瘟病怎么防']
+      };
+    }
+    if (/(你是谁|你叫什么|你能做什么|你会什么|介绍下你|介绍一下你)/.test(q)) {
+      return {
+        html: '<p>我是小穗，一个“只会照书答”的农技小助手。</p>' +
+          '<p>我的脑子里只有 25 条山东作物知识：小麦、玉米、花生、大蒜、苹果、设施蔬菜、生姜、大葱、甘薯、棉花。每条都写了怎么认、为什么发生、怎么办、注意什么。</p>' +
+          '<p><b>我不会联网，也不会现场编。</b>你问的东西如果不在条目里，我会直接说不知道。</p>',
+        expr: 'idle',
+        chips: ['山东都种什么', '你怎么保证不瞎编']
+      };
+    }
+    if (/(怎么用|如何使用|使用说明|帮助|教我)/.test(q)) {
+      return {
+        html: '<p>三步：</p>' +
+          '<p>1. 说清楚<b>作物 + 部位 + 症状</b>（越具体越好）；<br>2. 看答案里的“怎么认 / 怎么办 / 注意”；<br>3. 拿不准就点下面的相关条目，或问当地农技站。</p>' +
+          '<p>右边的小绿是练习题：它生病时，你选一个治法，选错我也会讲清楚错在哪。</p>',
+        expr: 'idle',
+        chips: ['小麦条锈病', '番茄灰霉病', '小绿怎么玩']
+      };
+    }
+    if (/(谢谢|感谢|辛苦|好用|不错)/.test(q)) {
+      return { html: '<p>不客气。地里的事，宁可多问一句，也别凭感觉下药。</p>', expr: 'happy' };
+    }
+    if (/(不瞎编|保证|可信|靠谱|幻觉|胡说|准确|会不会错)/.test(q)) {
+      return {
+        html: '<p>四道约束，缺一不可：</p>' +
+          '<p>① <b>只从 25 条审核条目里找答案</b>，不调用生成模型自由发挥；<br>' +
+          '② 每条答案都标<b>条目编号和匹配度</b>，你能回头查；<br>' +
+          '③ 匹配度低于阈值就<b>直接拒答</b>，并给出最接近的几条让你自己判断；<br>' +
+          '④ 用药只给技术要点，<b>不给具体商品名和用量</b>，以标签为准。</p>' +
+          '<p>点右上角“为什么可信”可以看到完整说明。</p>',
+        expr: 'idle',
+        chips: ['为什么可信', '农药怎么用才安全']
+      };
+    }
+    if (/(山东|本省|这里|本地).*(种|栽|作物|主产|产什么)|都种什么|种什么/.test(q)) {
+      var h = '<p>山东从西到东，主要有这 10 类：</p><div class="chips">' +
+        CROPS.map(function (c) {
+          return '<button class="suggest-chip" data-ask="' + esc(c.name) + '">' + c.em + ' ' + c.name + '</button>';
+        }).join('') + '</div><p style="margin-top:10px">点一个，我把这类作物我记住的问题列给你。</p>';
+      return { html: h, expr: 'idle' };
+    }
+    if (/(价格|行情|多少钱|天气预报|明天|下周|产量预测|补贴|政策|市场)/.test(q)) {
+      return {
+        html: '<p>这类问题我答不了：<b>价格、天气、补贴都需要实时数据</b>，我的知识库里没有，编一个数字反而害你。</p>' +
+          '<p>建议看当地农业农村部门的行情发布，或直接问收购商。</p>',
+        expr: 'worried'
+      };
+    }
+    if (/(小绿|宠物|植物|养成|玩法)/.test(q)) {
+      return {
+        html: '<p>小绿是我养的一盆番茄，也是你的练习题。</p>' +
+          '<p>它会随机“生病”，气泡里出现病虫害图和症状；你从 3 个治法里选一个——<b>选对成长 +12、健康 +5，选错健康 -10</b>，但错的那个选项也会告诉你为什么错。</p>' +
+          '<p>养到“结果”，它就会结出红番茄。</p>',
+        expr: 'happy',
+        chips: ['小绿生病了怎么办', '怎么看病虫害图']
+      };
+    }
+    return null;
+  }
+
+  function respond(raw) {
+    var q = norm(raw);
+    var meta = metaAnswer(q);
+    if (meta) return meta;
+
+    var crop = detectCrop(q);
+    var scored = INDEX.map(function (it) { return { it: it, s: scoreIt(it, q, crop) }; })
+      .sort(function (a, b) { return b.s - a.s; });
+    var best = scored[0];
+    var second = scored[1];
+    var alt = (second && second.it.e.cropId === best.it.e.cropId && second.it.e.id !== best.it.e.id &&
+      second.s >= 5 && second.s >= best.s - 2.5) ? second.it.e : null;
+
+    if (crop && cropOnly(q, crop) && best.s < 18) {
+      return cropOverview(crop);
+    }
+    if (best.s >= 10) return entryHtml(best.it.e, best.s, false, alt);
+    if (best.s >= 6 && crop) return entryHtml(best.it.e, best.s, true, alt);
+    if (best.s >= 6 && !crop) {
+      var crops = uniq(scored.slice(0, 4).map(function (x) { return x.it.e.cropId; }));
+      if (crops.length >= 2) return clarify(scored, raw);
+      return entryHtml(best.it.e, best.s, true, null);
+    }
+    if (crop) return cropOverview(crop, true);
+    return refuse(raw, scored);
+  }
+
+  /* 判断是不是“只问了作物名” */
+  function cropOnly(q, crop) {
+    var leftover = q;
+    var names = (CROP_ALIAS[crop.id] || []).concat([crop.name])
+      .sort(function (a, b) { return b.length - a.length; });
+    names.forEach(function (n) { leftover = leftover.split(n).join(''); });
+    return leftover.length <= 1;
+  }
+
+  /* ---------------- 聊天 UI ---------------- */
+  var messages = $('#messages');
+  var input = $('#askInput');
+
+  function scrollBottom() {
+    requestAnimationFrame(function () { messages.scrollTop = messages.scrollHeight; });
+  }
+
+  function addUser(text) {
+    var d = document.createElement('div');
+    d.className = 'msg msg-user';
+    d.innerHTML = '<div class="msg-col"><div class="bubble">' + esc(text) + '</div></div>';
+    messages.appendChild(d);
+    scrollBottom();
+  }
+
+  function addBot(html, expr, chips) {
+    var d = document.createElement('div');
+    d.className = 'msg msg-bot';
+    d.innerHTML = '<div class="avatar">' + ART.assistantHead(expr || 'idle') + '</div>' +
+      '<div class="msg-col"><div class="msg-author">小穗</div>' +
+      '<div class="bubble">' + html + '</div>' +
+      (chips && chips.length ? '<div class="chips">' + chips.map(function (c) {
+        return '<button class="suggest-chip" data-ask="' + esc(c) + '">' + esc(c) + '</button>';
+      }).join('') + '</div>' : '') +
+      '</div>';
+    messages.appendChild(d);
+    scrollBottom();
+    return d;
+  }
+
+  function addTyping() {
+    var d = document.createElement('div');
+    d.className = 'msg msg-bot typing-msg';
+    d.innerHTML = '<div class="avatar">' + ART.assistantHead('thinking') + '</div>' +
+      '<div class="msg-col"><div class="msg-author">小穗</div>' +
+      '<div class="bubble"><span class="typing"><i></i><i></i><i></i></span></div></div>';
+    messages.appendChild(d);
+    scrollBottom();
+    return d;
+  }
+
+  function setSuggestions(list) {
+    var box = $('#suggest');
+    box.innerHTML = (list || []).map(function (s) {
+      return '<button class="suggest-chip" data-ask="' + esc(s) + '">' + esc(s) + '</button>';
+    }).join('');
+  }
+
+  function ask(text, opts) {
+    text = String(text || '').trim();
+    if (!text) return;
+    if (ui.view !== 'chat') switchView('chat');
+    addUser(text);
+    ui.lastQuery = text;
+    if (LLM) LLM.bump('asks');
+    var typing = addTyping();
+
+    function finish(useText, ai) {
+      var res = respond(useText);
+      if (ai && ai.ok) {
+        var note = 'AI 归一化：' + esc(ai.normalized) +
+          (ai.crop ? ' · 作物：' + esc(ai.crop) : '') +
+          (ai.part ? ' · 部位：' + esc(ai.part) : '') +
+          ' · ' + esc(ai.version);
+        res.html = '<p class="ans-ai-note">' + note + '</p>' + res.html;
+      }
+      setTimeout(function () {
+        if (typing && typing.parentNode) typing.remove();
+        addBot(res.html, res.expr, res.chips);
+        if (res.entryId) {
+          var e = KB.filter(function (x) { return x.id === res.entryId; })[0];
+          var rel = KB.filter(function (x) { return x.cropId === e.cropId && x.id !== e.id; })
+            .slice(0, 2).map(function (x) { return x.title; });
+          setSuggestions(rel.concat(['农药怎么用才安全']));
+        } else if (res.chips) {
+          setSuggestions([]);
+        }
+      }, opts && opts.fast ? 160 : 460);
+    }
+
+    if (LLM && LLM.enabled()) {
+      LLM.normalize(text).then(function (n) {
+        finish(n && n.ok && n.normalized ? n.normalized : text, n);
+      }).catch(function () { finish(text, null); });
+    } else {
+      finish(text, null);
+    }
+  }
+
+  function submitForm(e) {
+    e.preventDefault();
+    var v = input.value.trim();
+    if (!v) { input.focus(); return; }
+    input.value = '';
+    ask(v);
+    input.focus();
+  }
+
+  /* 消息内动作：朗读 / 复制 / 纠错 */
+  messages.addEventListener('click', function (ev) {
+    var speak = ev.target.closest('[data-speak]');
+    if (speak) { speakOut(speak.getAttribute('data-speak')); return; }
+    var copy = ev.target.closest('[data-copy]');
+    if (copy) { copyOut(copy.getAttribute('data-copy')); return; }
+    var fb = ev.target.closest('[data-feedback]');
+    if (fb) { openFeedback(fb); return; }
+  });
+
+  /* 纠错：进入人工复核队列 */
+  function openFeedback(btn) {
+    if (!REVIEW) { toast('复核模块未加载'); return; }
+    var entryId = btn.getAttribute('data-entry') || '';
+    var title = btn.getAttribute('data-title') || '';
+    var q = ui.lastQuery || '';
+    openModal(
+      '<h2 id="modalTitle">这条答案有问题？</h2>' +
+      '<p class="sub">提交后会进入人工复核队列，由农技员确认或改写，并留下记录。</p>' +
+      '<label class="field"><span>问题类型</span>' +
+      '<select id="fbReason">' +
+      '<option>认错了病 / 虫</option>' +
+      '<option>防治方法不对</option>' +
+      '<option>用药或安全间隔期有问题</option>' +
+      '<option>答案不完整</option>' +
+      '<option>其他</option></select></label>' +
+      '<label class="field"><span>补充说明（可选）</span><textarea id="fbNote" rows="3" style="border:1px solid var(--line-2);border-radius:9px;padding:9px 11px;font-family:inherit;font-size:13px"></textarea></label>' +
+      '<div class="modal-actions"><button class="save-btn" id="fbSubmit" type="button">提交复核</button></div>'
+    );
+    var sub = $('#fbSubmit');
+    if (sub) sub.addEventListener('click', function () {
+      var reason = ($('#fbReason') || {}).value || '其他';
+      var note = ($('#fbNote') || {}).value || '';
+      REVIEW.add({ q: q, entryId: entryId, entryTitle: title, reason: reason, note: note });
+      closeModal();
+      toast('已提交复核，可在「人工复核台」查看');
+      btn.disabled = true;
+      btn.textContent = '已提交';
+    });
+  }
+
+  document.addEventListener('click', function (ev) {
+    var b = ev.target.closest('[data-ask]');
+    if (!b) return;
+    var q = b.getAttribute('data-ask');
+    if (ui.view !== 'chat') switchView('chat');
+    ask(q);
+  });
+
+  function speakOut(text) {
+    if (!('speechSynthesis' in window)) { toast('这个浏览器不支持朗读'); return; }
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(text);
+    u.lang = 'zh-CN';
+    u.rate = 0.94;
+    var vs = window.speechSynthesis.getVoices().filter(function (v) { return /zh|Chinese/i.test(v.lang + v.name); });
+    if (vs.length) u.voice = vs[0];
+    window.speechSynthesis.speak(u);
+    toast('正在朗读…');
+  }
+
+  function copyOut(text) {
+    var done = function () { toast('已复制，可粘贴到微信发给乡亲'); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(function () { fallbackCopy(text, done); });
+    } else fallbackCopy(text, done);
+  }
+  function fallbackCopy(text, done) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); done(); } catch (e) { toast('复制失败，请手动选择文字'); }
+    ta.remove();
+  }
+
+  /* 语音输入 */
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  function initMic() {
+    var btn = $('#btnMic');
+    if (!SR) {
+      btn.addEventListener('click', function () { toast('这个浏览器不支持语音输入，试试 Chrome 或 Edge'); });
+      btn.style.opacity = '.55';
+      return;
+    }
+    var rec = new SR();
+    rec.lang = 'zh-CN';
+    rec.interimResults = false;
+    rec.maxAlternatives = 1;
+    var live = false;
+    btn.addEventListener('click', function () {
+      if (live) { rec.stop(); return; }
+      try { rec.start(); } catch (e) { toast('语音暂时不可用'); }
+    });
+    rec.onstart = function () { live = true; btn.classList.add('is-live'); toast('请说话…'); };
+    rec.onend = function () { live = false; btn.classList.remove('is-live'); };
+    rec.onerror = function () { live = false; btn.classList.remove('is-live'); toast('没听清，再说一次？'); };
+    rec.onresult = function (ev) {
+      var txt = ev.results[0][0].transcript;
+      if (txt) { input.value = txt; setTimeout(function () { ask(txt); input.value = ''; }, 120); }
+    };
+  }
+
+  /* ---------------- 植物萌宠 ---------------- */
+  var IDLE_TIPS = [
+    '我今天晒了太阳，叶子暖暖的。',
+    '小知识：' + FACTS[0].text,
+    '小知识：' + FACTS[1].text,
+    '小知识：' + FACTS[2].text,
+    '有点渴……点下面的小水壶给我浇水吧。',
+    '你要是拿不准，就点我下面的“玩法”。',
+    '听说山东的寿光，一个县能种出几百种菜。'
+  ];
+
+  var BADGES = [
+    { key: 'first', name: '初次问诊', test: function (p) { return p.ok >= 1; } },
+    { key: 'streak3', name: '连对三题', test: function (p) { return p.best >= 3; } },
+    { key: 'expert', name: '辨病小能手', test: function (p) { return p.ok >= 6; } },
+    { key: 'bloom', name: '开花啦', test: function (p) { return p.growth >= 70; } },
+    { key: 'harvest', name: '结果啦', test: function (p) { return p.growth >= 90; } }
+  ];
+
+  function savePet() { save(PET_KEY, pet); }
+
+  function renderPlant() {
+    $('#plant').innerHTML = ART.plant({
+      stage: stageOf(pet.growth),
+      sick: !!ui.quiz && !ui.answered,
+      mood: ui.quiz && !ui.answered ? 'sick' : (pet.health >= 60 ? 'happy' : 'ok')
+    });
+  }
+
+  function renderStats() {
+    var h = Math.max(0, Math.min(100, Math.round(pet.health)));
+    var g = Math.max(0, Math.min(100, Math.round(pet.growth)));
+    $('#stageName').textContent = STAGE_NAMES[stageOf(g)];
+    $('#healthVal').textContent = h;
+    $('#growthVal').textContent = g;
+    var hb = $('#healthBar');
+    hb.style.width = h + '%';
+    hb.className = 'bar-health' + (h < 30 ? ' is-bad' : h < 60 ? ' is-warn' : '');
+    $('#growthBar').style.width = g + '%';
+    $('#okCount').textContent = pet.ok;
+    $('#streakCount').textContent = pet.streak;
+    $('#badgeCount').textContent = pet.badges.length;
+
+    var box = $('#badges');
+    box.innerHTML = BADGES.filter(function (b) { return pet.badges.indexOf(b.key) >= 0; })
+      .map(function (b) { return '<span class="badge">' + b.name + '</span>'; }).join('');
+
+    renderDiary();
+  }
+
+  function renderDiary() {
+    var box = $('#diary');
+    var log = pet.log || [];
+    var rows = log.slice(-4).reverse().map(function (it) {
+      var cls = it.k === 'ok' ? 'd-ok' : it.k === 'no' ? 'd-no' : 'd-care';
+      var ico = it.k === 'ok' ? '✓' : it.k === 'no' ? '✕' : '·';
+      return '<p class="' + cls + '"><i>' + ico + '</i><span>' + esc(it.text) + '</span></p>';
+    });
+    if (!rows.length) {
+      rows = ['<p class="d-care"><i>·</i><span>刚种下，等你来照顾</span></p>'];
+    }
+    box.hidden = false;
+    box.innerHTML = '<h3>小绿日记</h3>' + rows.join('');
+  }
+
+  function log(kind, text) {
+    pet.log = pet.log || [];
+    pet.log.push({ k: kind, text: text });
+    if (pet.log.length > 8) pet.log = pet.log.slice(-8);
+  }
+
+  function checkBadges() {
+    BADGES.forEach(function (b) {
+      if (pet.badges.indexOf(b.key) < 0 && b.test(pet)) {
+        pet.badges.push(b.key);
+        toast('获得徽章：' + b.name);
+      }
+    });
+  }
+
+  function setBubble(html) {
+    var b = $('#bubble');
+    b.innerHTML = html;
+    b.style.animation = 'none';
+    void b.offsetWidth;
+    b.style.animation = '';
+  }
+
+  function idleBubble() {
+    setBubble('<b>小绿</b>：' + esc(pick(IDLE_TIPS)));
+  }
+
+  function startQuiz() {
+    if (ui.quiz) return;
+    var pool = QUIZ.filter(function (q) { return pet.seen.indexOf(q.id) < 0; });
+    if (!pool.length) { pet.seen = []; pool = QUIZ.slice(); }
+    var q = pick(pool);
+    pet.seen.push(q.id);
+    if (pet.seen.length > 8) pet.seen = pet.seen.slice(-8);
+    ui.quiz = q;
+    ui.answered = false;
+    pet.played += 1;
+    $('#stage').classList.add('is-quiz');
+    savePet();
+
+    setBubble(
+      '<div class="bub-title">🌱 小绿不舒服了</div>' +
+      '<div class="bub-media">' + ART.specimen({ base: q.base, art: q.art }) + '</div>' +
+      '<div>' + esc(q.symptom) + '</div>'
+    );
+
+    var box = $('#quiz');
+    box.hidden = false;
+    box.innerHTML = '<div class="quiz-q">' + esc(q.question) + '</div>' +
+      '<div class="quiz-opts">' + q.options.map(function (o, i) {
+        return '<button class="opt" type="button" data-opt="' + i + '">' +
+          '<span class="mark">' + String.fromCharCode(65 + i) + '</span>' + esc(o.t) +
+          '<span class="why" hidden>' + (o.ok ? '✓ ' : '✗ ') + esc(o.why) + '</span></button>';
+      }).join('') + '</div>' +
+      '<div class="quiz-foot"><span>选一个，我会讲为什么</span></div>';
+
+    renderPlant();
+    renderStats();
+  }
+
+  function answerQuiz(btn) {
+    if (!ui.quiz || ui.answered) return;
+    ui.answered = true;
+    $('#stage').classList.remove('is-quiz');
+    var idx = Number(btn.getAttribute('data-opt'));
+    var opt = ui.quiz.options[idx];
+    var opts = $$('#quiz .opt');
+
+    opts.forEach(function (b, i) {
+      b.disabled = true;
+      var why = b.querySelector('.why');
+      if (why) why.hidden = false;
+      if (ui.quiz.options[i].ok) b.classList.add('is-right');
+      if (i === idx && !ui.quiz.options[i].ok) b.classList.add('is-wrong');
+    });
+
+    if (opt.ok) {
+      pet.ok += 1; pet.streak += 1; pet.best = Math.max(pet.best, pet.streak);
+      pet.growth = Math.min(100, pet.growth + 12);
+      pet.health = Math.min(100, pet.health + 5);
+      toast('答对了！小绿长大了一点');
+    } else {
+      pet.wrong += 1; pet.streak = 0;
+      pet.growth = Math.min(100, pet.growth + 3);
+      pet.health = Math.max(0, pet.health - 10);
+    }
+    checkBadges();
+    log(opt.ok ? 'ok' : 'no', ui.quiz.name + ' · ' + (opt.ok ? '答对 +12' : '答错 −10'));
+    savePet();
+
+    var foot = $('#quiz .quiz-foot');
+    if (foot) {
+      foot.innerHTML = '<span>' + (opt.ok ? '✅ 处理正确' : '❌ 这次没选对，但记住了') + '</span>' +
+        '<button class="quiz-next" type="button" data-next="1">继续照顾</button>';
+    }
+    var learn = document.createElement('div');
+    learn.className = 'quiz-learn';
+    learn.textContent = '要点：' + ui.quiz.learn;
+    var box = $('#quiz');
+    box.appendChild(learn);
+
+    setBubble('<b>小绿</b>：' + (opt.ok ? '舒服多了，谢谢你！' : '原来是这样……我记住啦。') +
+      '<div class="bub-small">' + esc(ui.quiz.learn) + '</div>');
+
+    renderPlant();
+    renderStats();
+  }
+
+  function nextQuiz() {
+    ui.quiz = null;
+    ui.answered = false;
+    $('#stage').classList.remove('is-quiz');
+    var box = $('#quiz');
+    box.hidden = true;
+    box.innerHTML = '';
+    idleBubble();
+    renderPlant();
+    renderStats();
+    scheduleEvent(20000);
+  }
+
+  function care(kind) {
+    var now = Date.now();
+    if (now - pet.lastCare < 12000) { toast('刚照顾过，让它缓缓～'); return; }
+    pet.lastCare = now;
+    var msg = '';
+    if (kind === 'water') { pet.health = Math.min(100, pet.health + 2); pet.growth = Math.min(100, pet.growth + 1); msg = '喝饱水啦，叶子挺起来了。'; }
+    if (kind === 'sun') { pet.health = Math.min(100, pet.health + 1); msg = '晒晒太阳，光合作用满满。'; }
+    if (kind === 'soil') { pet.growth = Math.min(100, pet.growth + 2); msg = '松了松土，根能呼吸了。'; }
+    checkBadges();
+    log('care', (kind === 'water' ? '浇水' : kind === 'sun' ? '晒太阳' : '松土') + ' · ' +
+      (kind === 'soil' ? '成长 +2' : kind === 'water' ? '健康 +2' : '健康 +1'));
+    savePet();
+    setBubble('<b>小绿</b>：' + msg);
+    renderPlant();
+    renderStats();
+  }
+
+  function scheduleEvent(delay) {
+    clearTimeout(ui.timer);
+    ui.timer = setTimeout(function () {
+      if (document.hidden) { scheduleEvent(15000); return; }
+      if (!ui.quiz) startQuiz();
+    }, delay);
+  }
+
+  /* ---------------- 视图与设置 ---------------- */
+  function switchView(v) {
+    ui.view = v;
+    $('#view-chat').hidden = v !== 'chat';
+    $('#view-kb').hidden = v !== 'kb';
+    $$('.tab').forEach(function (t) {
+      var on = t.getAttribute('data-view') === v;
+      t.classList.toggle('is-active', on);
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    if (v === 'kb') renderKb();
+  }
+
+  function applySimple(on) {
+    pref.simple = !!on;
+    $('#app').classList.toggle('simple', pref.simple);
+    var btn = $('#btnSimple');
+    btn.setAttribute('aria-pressed', pref.simple ? 'true' : 'false');
+    save(PREF_KEY, pref);
+    if (pref.simple) toast('大字模式：只留问答，字更大');
+  }
+
+  /* ---------------- 知识库视图 ---------------- */
+  function renderFacts() {
+    $('#facts').innerHTML = FACTS.map(function (f) {
+      return '<div class="fact"><div class="em">' + f.em + '</div><div><h3>' + esc(f.title) + '</h3><p>' + esc(f.text) + '</p></div></div>';
+    }).join('');
+  }
+
+  function renderFilters() {
+    var box = $('#cropFilter');
+    box.innerHTML = '<button class="chip is-on" data-filter="all">全部</button>' +
+      CROPS.map(function (c) {
+        return '<button class="chip" data-filter="' + c.id + '">' + c.em + ' ' + esc(c.name) + '</button>';
+      }).join('');
+    box.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-filter]');
+      if (!b) return;
+      ui.cropFilter = b.getAttribute('data-filter');
+      $$('#cropFilter .chip').forEach(function (c) { c.classList.toggle('is-on', c === b); });
+      renderKbList();
+    });
+  }
+
+  function matchSearch(e, q) {
+    if (!q) return true;
+    var hay = (e.title + e.crop + e.symptoms + e.cause + e.keywords.join('') + e.aliases.join('')).toLowerCase();
+    return hay.indexOf(q) >= 0;
+  }
+
+  function renderKbList() {
+    var q = norm($('#kbSearch').value);
+    var list = KB.filter(function (e) {
+      if (ui.cropFilter !== 'all' && e.cropId !== ui.cropFilter) return false;
+      return matchSearch(e, q);
+    });
+    var em = {};
+    CROPS.forEach(function (c) { em[c.id] = c.em; });
+
+    $('#kbList').innerHTML = list.map(function (e) {
+      return '<details class="kb-item">' +
+        '<summary><span class="em">' + (em[e.cropId] || '🌱') + '</span><span>' + esc(e.title) + '</span>' +
+        '<span class="cat">' + e.cat + '</span><span class="arrow">▸</span></summary>' +
+        '<div class="kb-body">' +
+          '<div class="row"><span class="k">怎么认</span><span class="v">' + esc(e.symptoms) + '</span></div>' +
+          '<div class="row"><span class="k">为什么</span><span class="v">' + esc(e.cause) + '</span></div>' +
+          '<div class="row"><span class="k">什么时候</span><span class="v">' + esc(e.season) + '</span></div>' +
+          '<div class="row"><span class="k">怎么办</span><span class="v"><ul>' +
+            e.control.map(function (c) { return '<li>' + esc(c) + '</li>'; }).join('') + '</ul></span></div>' +
+          '<div class="row"><span class="k">注意</span><span class="v">' + esc(e.tip) + '</span></div>' +
+          '<div class="src">#' + e.id + ' · ' + esc(e.crop) + ' · ' + e.level + ' · 内置审核条目</div>' +
+          '<div><button class="mini-act" data-ask="' + esc(e.crop + ' ' + e.title) + '">去问小穗</button></div>' +
+        '</div></details>';
+    }).join('');
+    $('#kbEmpty').hidden = list.length > 0;
+  }
+
+  function renderKb() {
+    renderKbList();
+  }
+
+  /* ---------------- 弹层 ---------------- */
+  function openModal(html) {
+    $('#modalBody').innerHTML = html;
+    $('#modal').hidden = false;
+    document.body.style.overflow = 'hidden';
+    $('#modalClose').focus();
+  }
+  function closeModal() {
+    $('#modal').hidden = true;
+    document.body.style.overflow = '';
+  }
+
+  function trustHtml() {
+    return '<h2 id="modalTitle">为什么可信</h2>' +
+      '<p class="sub">“不瞎编”不是一句口号，是四道硬约束。</p>' +
+      '<h3>1. 只从 25 条审核条目里找答案</h3>' +
+      '<p>所有回答都来自内置知识库的固定条目，不调用大模型自由生成。条目内容依据公开农技资料整理，逐条写了症状、病因、防治和注意事项。</p>' +
+      '<h3>2. 每条答案都带出处和匹配度</h3>' +
+      '<p>答案底部会标出条目编号（如 #WHEAT-01）和匹配度。匹配度是检索打分，不是“自信程度”，它告诉你这条答案跟你的问题有多接近。</p>' +
+      '<h3>3. 匹配不上就直接说不知道</h3>' +
+      '<p>低于阈值时，小穗会明确拒答，只列出最接近的几条供你判断，绝不硬凑一个答案。作物不明时，它会先反问，避免张冠李戴。</p>' +
+      '<h3>4. 建议不越界</h3>' +
+      '<p>只给技术路线和药剂类型（如“三唑类”），不给具体商品和用量；用药以农药标签和当地农技部门指导为准。</p>' +
+      '<div class="note">本应用是科普与田间参考工具，不能替代当地农技部门的现场诊断。病虫害确诊、用药剂量、安全间隔期，请以官方指导和农药标签为准。</div>';
+  }
+
+  function petHelpHtml() {
+    return '<h2 id="modalTitle">小绿怎么玩</h2>' +
+      '<p class="sub">一株会生病的番茄，也是一道道练习题。</p>' +
+      '<ol class="steps">' +
+      '<li>小绿会随机“生病”，气泡里出现病虫害示意图和症状描述。</li>' +
+      '<li>下面给出 3 个治疗方案，选一个你认为对的。</li>' +
+      '<li>选对：成长 +12、健康 +5、连对 +1；选错：健康 −10，但会告诉你错在哪。</li>' +
+      '<li>成长到 70 开花、到 90 结果。答对 6 题还能拿“辨病小能手”徽章。</li>' +
+      '</ol>' +
+      '<h3>小提示</h3>' +
+      '<p>图是示意图，认病主要看文字里的部位和症状。拿不准时，先想“这是什么作物、什么部位、什么症状”，再选治法。</p>' +
+      '<div class="note">小绿的健康和成长只保存在这台设备的浏览器里，换设备不会同步。</div>';
+  }
+
+  /* ---------------- AI 设置 ---------------- */
+  function updateAiBadge() {
+    var el = $('#aiBadge');
+    if (!el || !LLM) return;
+    var cfg = LLM.loadCfg();
+    el.classList.remove('is-on', 'is-warn');
+    if (cfg.enabled) {
+      el.classList.add('is-on');
+      el.textContent = 'AI 增强 · ' + (cfg.promptVersion || 'v2');
+    } else {
+      el.textContent = 'AI 未启用';
+    }
+  }
+
+  function openAiSettings() {
+    if (!LLM) return;
+    var cfg = LLM.loadCfg();
+    $('#aiEnabled').checked = !!cfg.enabled;
+    $('#aiEndpoint').value = cfg.endpoint || '';
+    $('#aiModel').value = cfg.model || '';
+    $('#aiKey').value = cfg.key || '';
+    var sel = $('#aiPrompt');
+    sel.innerHTML = Object.keys(LLM.PROMPTS).map(function (k) {
+      return '<option value="' + k + '">' + LLM.PROMPTS[k].name + '</option>';
+    }).join('');
+    sel.value = cfg.promptVersion || 'v2';
+    $('#aiStatus').textContent = '未检测。点“测试连接”看看服务端起没起。';
+    $('#aiModal').hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+
+  function saveAiSettings() {
+    if (!LLM) return;
+    var cfg = {
+      enabled: $('#aiEnabled').checked,
+      endpoint: $('#aiEndpoint').value.trim() || '/api/chat',
+      model: $('#aiModel').value.trim() || 'deepseek-chat',
+      key: $('#aiKey').value.trim(),
+      promptVersion: $('#aiPrompt').value || 'v2'
+    };
+    LLM.saveCfg(cfg);
+    updateAiBadge();
+    $('#aiModal').hidden = true;
+    document.body.style.overflow = '';
+    toast(cfg.enabled ? '已开启 AI 增强（' + cfg.promptVersion + '）' : '已关闭 AI，回到纯检索模式');
+  }
+
+  /* ---------------- 初始化 ---------------- */
+  function init() {
+    // 作物快选
+    $('#cropChips').innerHTML = CROPS.map(function (c) {
+      return '<button class="chip" data-ask="' + esc(c.name) + '"><span class="em">' + c.em + '</span><b>' + esc(c.name) + '</b></button>';
+    }).join('');
+
+    // 欢迎语
+    addBot(
+      '<p>你好，我是小穗，山东作物问答的小助手。</p>' +
+      '<p>我只讲知识库里有的东西——<b>不联网、不猜、不编</b>。答不上来，我会直接说“不知道”。</p>' +
+      '<p>你只要告诉我：<b>什么作物 + 哪个部位 + 什么症状</b>。</p>' +
+      '<div class="cap-list">' +
+        '<div><span class="em">🔍</span><span><b>认病虫</b>25 条山东常见作物条目，带症状、病因和治法</span></div>' +
+        '<div><span class="em">💊</span><span><b>安全用药</b>对症、适量、轮换、安全间隔期</span></div>' +
+        '<div><span class="em">🌱</span><span><b>养小绿</b>边玩边练诊断，答错也讲原因</span></div>' +
+      '</div>',
+      'happy'
+    );
+    setTimeout(function () {
+      addBot(
+        '<p>右边那盆番茄叫<b>小绿</b>，是我养的。它偶尔会闹毛病，你帮它选对治法，它就长大一点。</p>' +
+        '<p>答错也没关系，我会讲清楚为什么错。</p>',
+        'idle'
+      );
+      setSuggestions(['小麦叶子上有黄粉', '番茄幼果长灰毛', '大蒜叶子发黄', '姜瘟病怎么防']);
+      scrollBottom();
+    }, 420);
+
+    // 表单 & 快捷键
+    $('#askForm').addEventListener('submit', submitForm);
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && !e.shiftKey) { /* form submit 会处理 */ }
+    });
+
+    // 输入中给一点引导
+    input.addEventListener('focus', function () {
+      if (!input.value && !$('#suggest').children.length) {
+        setSuggestions(['小麦叶子上有黄粉', '番茄幼果长灰毛', '大蒜叶子发黄']);
+      }
+    });
+
+    // 顶部按钮
+    $$('.tab').forEach(function (t) {
+      t.addEventListener('click', function () { switchView(t.getAttribute('data-view')); });
+    });
+    $('#btnSimple').addEventListener('click', function () {
+      applySimple(!pref.simple);
+    });
+    $('#btnTrust').addEventListener('click', function () { openModal(trustHtml()); });
+    $('#btnAi').addEventListener('click', openAiSettings);
+    $('#aiClose').addEventListener('click', function () {
+      $('#aiModal').hidden = true; document.body.style.overflow = '';
+    });
+    $('#aiSave').addEventListener('click', saveAiSettings);
+    $('#aiTest').addEventListener('click', function () {
+      var box = $('#aiStatus');
+      box.textContent = '检测中…';
+      LLM.health().then(function (h) {
+        box.textContent = h && h.llm
+          ? ('服务端就绪：' + (h.mock ? 'MOCK 模式（固定返回，适合演示）' : 'DeepSeek 代理已配置'))
+          : '服务端未就绪：请在应用目录运行 node server.js';
+      });
+    });
+    $('#aiModal').addEventListener('click', function (e) {
+      if (e.target === $('#aiModal')) { $('#aiModal').hidden = true; document.body.style.overflow = ''; }
+    });
+    $('#btnPetHelp').addEventListener('click', function () { openModal(petHelpHtml()); });
+    $('#btnPetReset').addEventListener('click', function () {
+      if (!confirm('重新种一株？成长、健康和徽章都会清零。')) return;
+      pet = JSON.parse(JSON.stringify(DEFAULT_PET));
+      savePet();
+      ui.quiz = null;
+      ui.answered = false;
+      $('#stage').classList.remove('is-quiz');
+      $('#quiz').hidden = true;
+      $('#quiz').innerHTML = '';
+      idleBubble();
+      renderPlant();
+      renderStats();
+      toast('新的一株小绿，从头开始');
+    });
+    $('#modalClose').addEventListener('click', closeModal);
+    $('#modal').addEventListener('click', function (e) {
+      if (e.target === $('#modal')) closeModal();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !$('#modal').hidden) closeModal();
+      if (e.key === 'Escape' && !$('#aiModal').hidden) {
+        $('#aiModal').hidden = true; document.body.style.overflow = '';
+      }
+    });
+
+    // 宠物交互
+    $('#quiz').addEventListener('click', function (e) {
+      var opt = e.target.closest('[data-opt]');
+      if (opt) { answerQuiz(opt); return; }
+      if (e.target.closest('[data-next]')) nextQuiz();
+    });
+    $$('.care button').forEach(function (b) {
+      b.addEventListener('click', function () { care(b.getAttribute('data-care')); });
+    });
+
+    // 知识库
+    renderFacts();
+    renderFilters();
+    $('#kbSearch').addEventListener('input', renderKbList);
+    $('#brandHome').addEventListener('click', function (e) { e.preventDefault(); switchView('chat'); });
+
+    // 语音
+    initMic();
+
+    // 恢复偏好与宠物
+    applySimple(pref.simple);
+    if (pet.health <= 0) pet.health = 25;
+    renderStats();
+    renderPlant();
+    idleBubble();
+    scheduleEvent(14000);
+
+    // AI 开关：?ai=1 直接启用（配合 node server.js 演示用）
+    if (LLM) {
+      if (/[?&]ai=1/.test(location.search)) {
+        var aiCfg = LLM.loadCfg();
+        aiCfg.enabled = true;
+        LLM.saveCfg(aiCfg);
+      }
+      updateAiBadge();
+    }
+
+    // 可分享的问题 / 视图链接：#ask=小麦叶子上有黄粉 或 #kb
+    var m = (location.hash || '').match(/^#ask=(.+)$/);
+    if (m) setTimeout(function () { ask(decodeURIComponent(m[1])); }, 520);
+    if (location.hash === '#kb') switchView('kb');
+    if (location.hash === '#simple') applySimple(true);
+
+    // 首次进入，给一个轻提示
+    setTimeout(function () {
+      if (!pet.played) toast('右边的小绿随时会生病，帮它看看？');
+    }, 3200);
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+
+  /* 供调试与二次开发使用（不影响正常界面） */
+  window.NZ.engine = {
+    respond: respond,
+    detectCrop: detectCrop,
+    norm: norm,
+    kb: KB,
+    quiz: QUIZ
+  };
+})();
+
+</script>
+
+<script>
+(function(){
+  function openReview(e){
+    if(e) e.preventDefault();
+    var m=document.getElementById('reviewModal');
+    if(!m) return;
+    m.hidden=false; document.body.style.overflow='hidden';
+    if(window.NZ && NZ.review) NZ.review.render();
+  }
+  function closeReview(){
+    var m=document.getElementById('reviewModal');
+    if(m){ m.hidden=true; document.body.style.overflow=''; }
+  }
+  document.addEventListener('click', function(e){
+    var a=e.target.closest('#openReview');
+    if(a) openReview(e);
+    var c=e.target.closest('#reviewClose');
+    if(c) closeReview();
+    var m=document.getElementById('reviewModal');
+    if(m && e.target===m) closeReview();
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.key==='Escape'){ closeReview(); }
+  });
+  if(location.hash==='#review') setTimeout(openReview, 300);
+})();
+</script>
+</body>
+</html>
